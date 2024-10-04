@@ -14,7 +14,7 @@ class SuppliersResource extends Resource
 {
     protected static ?string $model = Suppliers::class;
 
-    protected static ?string $navigationGroup = 'Connect';
+    protected static ?string $navigationGroup = 'Connects';
 
     protected static ?string $navigationIcon = 'heroicon-o-building-office-2';
 

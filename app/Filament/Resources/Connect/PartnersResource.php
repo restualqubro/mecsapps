@@ -17,7 +17,7 @@ class PartnersResource extends Resource
 {
     protected static ?string $model = Partners::class;
 
-    protected static ?string $navigationGroup = 'Connect';
+    protected static ?string $navigationGroup = 'Connects';
 
     protected static ?string $pluralModelLabel = 'Partner';
 
