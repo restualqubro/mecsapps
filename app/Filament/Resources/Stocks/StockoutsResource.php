@@ -2,12 +2,12 @@
 
 namespace App\Filament\Resources\Stocks;
 
-use App\Filament\Resources\Stocks\StockinsResource\Pages;
-use App\Filament\Resources\Stocks\StockinsResource\RelationManagers;
+use App\Filament\Resources\Stocks\StockoutsResource\Pages;
+use App\Filament\Resources\Stocks\StockoutsResource\RelationManagers;
 use App\Models\Products\ProductStocks;
-use App\Models\Products\Stockins;
 use App\Models\Products\StockCategories;
-use App\Models\Products\StockinDetails;
+use App\Models\Products\StockoutDetails;
+use App\Models\Products\Stockouts;
 use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -18,15 +18,15 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class StockinsResource extends Resource
+class StockoutsResource extends Resource
 {
-    protected static ?string $model = Stockins::class;
+    protected static ?string $model = Stockouts::class;
 
     protected static ?string $navigationGroup = 'Stocks';
 
-    protected static ?string $pluralModelLabel = 'Stockins';
+    protected static ?string $pluralModelLabel = 'Stockout';
 
-    protected static ?string $navigationIcon = 'heroicon-o-arrow-up-on-square';
+    protected static ?string $navigationIcon = 'heroicon-o-arrow-down-on-square';
 
     public static function form(Form $form): Form
     {
@@ -38,38 +38,32 @@ class StockinsResource extends Resource
                         Forms\Components\Card::make()
                             ->schema([
                                 Forms\Components\TextInput::make('code')
-                                    ->label('Kode Stockin')  
-                                    ->default(fn() => self::getStockinsCode())                                  
+                                    ->label('Kode Stockout')
+                                    ->default(fn() => self::getStockoutCode())
                                     ->readonly()
-                                    ->required()                                    ,                                                                
+                                    ->required(),                                                              
                                 Forms\Components\Select::make('category_id')
                                     ->label('Kategori')                                  
-                                    ->options(
-                                        StockCategories::where('jenis', '=', 'Stockin')
-                                        ->pluck('name', 'id'))
+                                    ->options(StockCategories::where('jenis', '=', 'Stockout')->pluck('name', 'id'))
                                     ->searchable()
-                                    ->required(),
-                                Forms\Components\TextInput::make('sumber')
-                                    ->label('Sumber Stok')
-                                    ->required(),
+                                    ->required(),                                
                                 Forms\Components\TextArea::make('description')
-                                    ->label('Keterangan')
-                                    ->columnSpan('full')
+                                    ->label('Keterangan'),
                             ])->columns(3),
                         Forms\Components\Card::make()
                             ->schema([
                                 Forms\Components\Placeholder::make('Products'),
-                                Forms\Components\Repeater::make('detailStockin')
+                                Forms\Components\Repeater::make('detailStockout')
                                     ->label('Detail Items')                                                                    
-                                    ->relationship('detailStockin')
-                                    ->schema([                                        
+                                    ->relationship()
+                                    ->schema([                                                                                
                                         Forms\Components\Select::make('stock_id')
-                                            ->label('SKU')                                            
+                                            ->label('SKU')                                                                                        
                                             ->options(                                                
                                                 $stock->mapWithKeys(function (ProductStocks $stock) {
-                                                    return [$stock->id => sprintf('%s-%s', $stock->item->code, $stock->code)];
+                                                    return [$stock->id => sprintf('%s-%s | %s', $stock->item->code, $stock->code, $stock->item->name)];
                                                 })
-                                                )                                                                                    
+                                                )                                                                        
                                             ->required()
                                             ->searchable()
                                             ->reactive()
@@ -106,10 +100,8 @@ class StockinsResource extends Resource
                                         'md' => 10
                                     ])
                                     ->columnSpan('full')
-                                    ->deletable(true)
                             ]),
-                    ])
-                    ->columnSpan('full')                    
+                    ])->columnSpan('full')
             ]);
     }
 
@@ -140,7 +132,7 @@ class StockinsResource extends Resource
                         ->modalDescription('You sure want deleted this data ? if you delete it, 
                                             item details will also deleted')   
                         ->action(function($record) {
-                            StockinDetails::where('stockin_id', $record->id)->delete();
+                            StockoutDetails::where('stockout_id', $record->id)->delete();
                             $record->delete();                    
                         })
                         ->after(function () {                        
@@ -149,30 +141,32 @@ class StockinsResource extends Resource
                                 ->icon('heroicon-o-check-circle')
                                 ->iconColor('success')
                                 ->send();
-                        }),                  
-                ])
+                        }),
+                ])                
             ]);
     }
 
-    public static function getStockinsCode(): string
-    {        
+    public static function getStockoutCode(): string
+    {
         $date = Carbon::now()->format('my');
-        $last = Stockins::whereRaw("MID(code, 5, 4) = $date")->max('code');                                        
-        if ($last != null) {                                                                                                                                            
-            $tmp = substr($last, 8, 4)+1;                                            
-            $code = "STI-".$date.sprintf("%03s", $tmp);                                                                            
+        $last = Stockouts::whereRaw("MID(code, 5, 4) = $date")->max('code');                                        
+        if ($last != null) {                                                                                    
+            $tmp = substr($last, 8, 4)+1;            
+            $code =  "STO-".$date.sprintf("%03s", $tmp);                                                                            
         } else {
-            $code = "STI-".$date."001";
+            $code = "STO-".$date."001";
         }
+        
         return $code;
-    }   
+    }
+
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListStockins::route('/'),
-            'create' => Pages\CreateStockins::route('/create'),
-            'edit' => Pages\EditStockins::route('/{record}/edit'),
+            'index' => Pages\ListStockouts::route('/'),
+            'create' => Pages\CreateStockouts::route('/create'),
+            'edit' => Pages\EditStockouts::route('/{record}/edit'),
         ];
     }
 }

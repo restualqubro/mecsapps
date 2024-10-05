@@ -27,6 +27,6 @@ class ProductStocks extends Model
     
     public function getFullcodeAttribute()
     {
-        return "{$this->product->code}-{$this->code}";
-    }
+        return "{$this->item->code}-{$this->code}";
+    }    
 }

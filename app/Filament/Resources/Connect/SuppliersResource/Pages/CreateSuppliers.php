@@ -9,4 +9,9 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateSuppliers extends CreateRecord
 {
     protected static string $resource = SuppliersResource::class;
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
 }

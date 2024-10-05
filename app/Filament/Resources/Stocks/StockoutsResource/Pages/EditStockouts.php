@@ -1,18 +1,16 @@
 <?php
 
-namespace App\Filament\Resources\Stocks\StockinsResource\Pages;
+namespace App\Filament\Resources\Stocks\StockoutsResource\Pages;
 
-use App\Filament\Resources\Stocks\StockinsResource;
-use App\Models\Products\StockinDetails;
+use App\Filament\Resources\Stocks\StockoutsResource;
+use App\Models\Products\StockoutDetails;
 use Filament\Actions;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\Modal\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 
-class EditStockins extends EditRecord
+class EditStockouts extends EditRecord
 {
-    protected static string $resource = StockinsResource::class;
+    protected static string $resource = StockoutsResource::class;
 
     protected function getHeaderActions(): array
     {
@@ -23,18 +21,17 @@ class EditStockins extends EditRecord
                 ->modalDescription('You sure want deleted this data ? if you delete it, 
                                     item details will also deleted')   
                 ->action(function($record) {
-                    StockinDetails::where('stockin_id', $record->id)->delete();
-                    $record->delete();
-                    
-                })    
+                    StockoutDetails::where('stockout_id', $record->id)->delete();
+                    $record->delete();                    
+                })
                 ->after(function () {
-                    redirect()->route('filament.admin.resources.stocks.stockins.index');
+                    redirect()->route('filament.admin.resources.stocks.stockouts.index');
                     Notification::make()
                         ->title('Deleted successfully')
                         ->icon('heroicon-o-check-circle')
                         ->iconColor('success')
                         ->send();
-                }),            
+                }),
         ];
     }
 }

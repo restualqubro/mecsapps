@@ -1,14 +1,15 @@
 <?php
 
-namespace App\Filament\Resources\Stocks\StockinsResource\Pages;
+namespace App\Filament\Resources\Stocks\StockoutsResource\Pages;
 
-use App\Filament\Resources\Stocks\StockinsResource;
+use App\Filament\Resources\Stocks\StockoutsResource;
+use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\Auth;
 
-class CreateStockins extends CreateRecord
+class CreateStockouts extends CreateRecord
 {
-    protected static string $resource = StockinsResource::class;
+    protected static string $resource = StockoutsResource::class;
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {

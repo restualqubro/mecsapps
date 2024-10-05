@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -42,9 +43,9 @@ class ProductItems extends Model implements HasMedia
             ->nonQueued();
     }
 
-    public function stock(): BelongsToMany
+    public function stock(): HasMany
     {
-        return $this->belongsToMany(ProductStocks::class);
+        return $this->HasMany(ProductStocks::class, 'item_id', 'id');
     }  
 
     public function category(): BelongsTo
@@ -56,15 +57,24 @@ class ProductItems extends Model implements HasMedia
     {
         return $this->belongsTo(ProductBrands::class, 'brand_id', 'id');
     }
+
+    public function getSumpinjamAttribute()
+    {           
+        $getStockId = ProductStocks::where('item_id', $this->id)->pluck('id');
+        $getPeminjaman = PeminjamanPart::where('stock_id', $getStockId)
+                                        ->where('status', 'Approve')->sum('qty');
+        return $getPeminjaman;
+    }
     
     public function getSumAttribute()
     {
+        $sumPinjam = $this->getSumpinjamAttribute();
         $sum = 0;
         $get = ProductStocks::select('stok')->where('item_id', $this->id)->get();                
         foreach($get as $stok)
         {
-            $sum = $sum + $stok->stok;
+            $sum = $sum + $stok->stok - $sumPinjam;
         }
         return $sum;
-    }
+    }     
 }

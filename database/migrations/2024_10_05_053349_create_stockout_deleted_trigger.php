@@ -13,9 +13,9 @@ return new class extends Migration
     public function up(): void
     {
         DB::unprepared('
-            CREATE TRIGGER tr_stockins_deleted AFTER DELETE ON `stockin_details` FOR EACH ROW
+            CREATE TRIGGER tr_stockouts_deleted AFTER DELETE ON `stockout_details` FOR EACH ROW
                 BEGIN
-                    UPDATE product_stocks SET product_stocks.stok = product_stocks.stok - OLD.qty
+                    UPDATE product_stocks SET product_stocks.stok = product_stocks.stok + OLD.qty
                     WHERE id = OLD.stock_id;
                 END
             ');
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('DROP TRIGGER `tr_stockins_deleted`');
+        Schema::dropIfExists('DROP TRIGGER `tr_stockouts_deleted`');
     }
 };

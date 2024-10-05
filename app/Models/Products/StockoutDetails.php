@@ -4,27 +4,24 @@ namespace App\Models\Products;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class StockinDetails extends Model
+class StockoutDetails extends Model
 {
     use HasFactory;
 
-    protected $table = 'stockin_details';
+    protected $table = 'stockout_details';
     protected $fillable = [
-        'stockin_id',
+        'stockout_id',
         'stock_id',
         'name',
         'qty'
     ];
 
-    public function stock(): BelongsTo
-    {
+    public function stock(){
         return $this->belongsTo(ProductStocks::class, 'stock_id', 'id');
     }
     
-    public function stockin(): BelongsTo
-    {
-        return $this->belongsTo(Stockins::class, 'stockin_id', 'id');
+    public function stockout(){
+        return $this->belongsTo(Stockouts::class, 'stockout_id', 'id');
     }
 }

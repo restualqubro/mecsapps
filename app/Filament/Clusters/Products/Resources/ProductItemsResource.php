@@ -4,6 +4,8 @@ namespace App\Filament\Clusters\Products\Resources;
 
 use App\Filament\Clusters\Products;
 use App\Filament\Clusters\Products\Resources\ProductItemsResource\Pages;
+use App\Models\Products\PeminjamanPart;
+use App\Models\Products\PengembalianPart;
 use App\Models\Products\ProductBrands;
 use App\Models\Products\ProductCategories;
 use App\Models\Products\ProductItems;
@@ -164,12 +166,15 @@ class ProductItemsResource extends Resource
         return $infolist
             ->schema([                
                 TextEntry::make('code')
-                    ->label('Kode Service')
+                    ->label('Kode Item')
                     ->weight(FontWeight::Bold),
                 TextEntry::make('name')
                     ->label('Name'),
                 TextEntry::make('sum')                   
                     ->label('Stok'),
+                TextEntry::make('sumpinjam')
+                    ->label('Peminjaman Item'),
+                    // ->default(fn() => self::getPeminjamanItem($infolist)),                    
                 TextEntry::make('category.name')
                     ->label('Categories'),
                 TextEntry::make('brand.name')
@@ -192,6 +197,15 @@ class ProductItemsResource extends Resource
                 'xl'    => 2
             ]);
     }
+
+    // public static function getPeminjamanItem($infolist)
+    // {
+    //     $getStockId = ProductStocks::where('item_id', $infolist->record->id)->pluck('id');    
+    //     $getPeminjaman = PeminjamanPart::where('stock_id', $getStockId)
+    //                                     ->where('status', 'Approve')
+    //                                     ->sum('qty');                        
+    //     return $getPeminjaman;
+    // }
 
     public static function getPages(): array
     {
