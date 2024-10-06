@@ -41,7 +41,9 @@ class AdminPanelProvider extends PanelProvider
             ->discoverClusters(in: app_path('Filament/Clusters'), for: 'App\\Filament\\Clusters')
             ->navigationGroups([
                 NavigationGroup::make()
-                     ->label('Stocks'),
+                     ->label('Transactions'),
+                NavigationGroup::make()
+                     ->label('Stocks'),                
                 NavigationGroup::make()
                      ->label('Connects'),
                 NavigationGroup::make()

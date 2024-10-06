@@ -14,6 +14,7 @@ class PeminjamanPart extends Model
     protected $table = 'peminjaman_parts';
 
     protected $fillable = [
+        'code',
         'submitted_id',
         'approval_id', 
         'status', 

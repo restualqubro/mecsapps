@@ -14,6 +14,7 @@ class PengembalianPart extends Model
     protected $table = 'pengembalian_parts';
 
     protected $fillable = [
+        'code',
         'submitted_id',
         'approval_id', 
         'status', 

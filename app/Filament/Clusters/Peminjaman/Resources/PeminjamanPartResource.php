@@ -4,16 +4,17 @@ namespace App\Filament\Clusters\Peminjaman\Resources;
 
 use App\Filament\Clusters\Peminjaman;
 use App\Filament\Clusters\Peminjaman\Resources\PeminjamanPartResource\Pages;
-use App\Filament\Clusters\Peminjaman\Resources\PeminjamanPartResource\RelationManagers;
 use App\Models\Products\PeminjamanPart;
 use App\Models\Products\ProductStocks;
+use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
+use Filament\Support\Enums\FontWeight;
 use Illuminate\Support\Facades\Auth;
 
 class PeminjamanPartResource extends Resource
@@ -29,6 +30,9 @@ class PeminjamanPartResource extends Resource
         $stock = ProductStocks::get();
         return $form
             ->schema([
+                Forms\Components\TextInput::make('code')
+                    ->readonly()
+                    ->default(fn() => self::getCode()),
                 Forms\Components\Select::make('stock_id')
                     ->label('Kode Stock')                                                                                        
                     ->options(                                                
@@ -39,13 +43,7 @@ class PeminjamanPartResource extends Resource
                     ->required()
                     ->searchable(),
                 Forms\Components\TextInput::make('qty'),
-                Forms\Components\Textarea::make('description')
-                    ->columnSpan([
-                        'sm' => 1,
-                        'md' => 1,
-                        'xl' => 2,
-                        '2xl' => 2,
-                    ])            
+                Forms\Components\Textarea::make('description')                                
             ])
             ->columns([
                 'sm' => 1,
@@ -59,18 +57,18 @@ class PeminjamanPartResource extends Resource
     {
         return $table
             ->columns([                
-                Tables\Columns\TextColumn::make('stock.fullcode'),
+                Tables\Columns\TextColumn::make('code'),
                 Tables\Columns\TextColumn::make('stock.item.name'),
+                Tables\Columns\TextColumn::make('qty'),
                 Tables\Columns\TextColumn::make('status')
-                    ->label('Submitted By')   
+                    ->label('Status')   
                     ->badge()
                     ->colors([
                         'success'   => 'Approved',
                         'danger'    => 'Reject',
-                        'gray'      => 'Baru'
-                    ]),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->label('Last Updated')
+                        'gray'      => 'Baru',
+                        'info'      => 'Kembali'
+                    ]),                
             ])
             ->filters([
                 //
@@ -117,11 +115,44 @@ class PeminjamanPartResource extends Resource
             ]);
     }
 
-    public static function getRelations(): array
+    public static function infolist(Infolist $infolist): Infolist
     {
-        return [
-            //
-        ];
+        return $infolist
+            ->schema([                
+                TextEntry::make('code')
+                    ->label('Kode Item')
+                    ->weight(FontWeight::Bold),                                                 
+                TextEntry::make('stock.item.name'),
+                TextEntry::make('qty'),
+                TextEntry::make('status')
+                    ->badge()
+                    ->colors([
+                        'success'   => 'Approved',
+                        'danger'    => 'Reject',
+                        'gray'      => 'Baru',
+                        'info'      => 'Kembali'
+                    ]),
+                TextEntry::make('submitted.name'),
+                TextEntry::make('approval.name')
+            ])->columns([
+                'sm'    => 1,
+                'lg'    => 2,
+                'xl'    => 2
+            ]);
+    }
+
+    public static function getCode(): string
+    {
+        $now = Carbon::now()->format('my');
+        $last = PeminjamanPart::whereRaw("MID(code, 5, 4) = $now")->max('code');        
+        if ($last) 
+        {                                                                                            
+            $tmp = substr($last, 8, 2)+1;
+            $code = "MPJ-".$now.sprintf("%02s", $tmp);                                                                            
+        } else {
+            $code =  "MPJ-".$now."01";
+        }        
+        return $code;
     }
 
     public static function getPages(): array

@@ -4,12 +4,9 @@ namespace App\Filament\Clusters\Products\Resources;
 
 use App\Filament\Clusters\Products;
 use App\Filament\Clusters\Products\Resources\ProductItemsResource\Pages;
-use App\Models\Products\PeminjamanPart;
-use App\Models\Products\PengembalianPart;
 use App\Models\Products\ProductBrands;
 use App\Models\Products\ProductCategories;
 use App\Models\Products\ProductItems;
-use App\Models\Products\ProductStocks;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\TextEntry;
@@ -25,6 +22,8 @@ class ProductItemsResource extends Resource
     protected static ?string $model = ProductItems::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-archive-box';
+
+    protected static ?int $navigationSort = 1;
 
     protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
 
@@ -54,26 +53,8 @@ class ProductItemsResource extends Resource
                     ])->columns('3')
                     ->footerActions([
                         Forms\Components\Actions\Action::make('Generate')
-                        ->action(function (Forms\Get $get, Forms\Set $set) { 
-                            $category = ProductCategories::find($get('category_id'));                            
-                            $brand = ProductBrands::find($get('brand_id'));                                                        
-                            
-                            if ($category === null || $brand === null) {
-                                $set('code', "Generate Gagal!!");
-                            } 
-                            else {  
-                                $last = ProductItems::where([
-                                    ['category_id', '=', $category->id],
-                                    ['brand_id', '=', $brand->id]
-                                ])->max('code');
-                                if ($last != null) {                                    
-                                    $tmp = substr($last, 7, 3)+1;
-                                    $set('code', $category->init."-".$brand->init.sprintf("%03s", $tmp));
-                                } else {
-                                    $set('code', $category->init."-".$brand->init."001");
-                                }                
-                            }
-                        })->hidden(fn(string $operation): bool => $operation === 'view') 
+                        ->action(fn (Forms\Get $get, Forms\Set $set) => self::generateCode() )
+                        ->hidden(fn(string $operation): bool => $operation === 'view') 
                         
                     ])->hidden(fn(string $operation):bool => $operation === 'edit'),                      
                     Forms\Components\Section::make('Product Details')
@@ -173,8 +154,7 @@ class ProductItemsResource extends Resource
                 TextEntry::make('sum')                   
                     ->label('Stok'),
                 TextEntry::make('sumpinjam')
-                    ->label('Peminjaman Item'),
-                    // ->default(fn() => self::getPeminjamanItem($infolist)),                    
+                    ->label('Peminjaman Item'),                                 
                 TextEntry::make('category.name')
                     ->label('Categories'),
                 TextEntry::make('brand.name')
@@ -196,6 +176,28 @@ class ProductItemsResource extends Resource
                 'lg'    => 2,
                 'xl'    => 2
             ]);
+    }
+
+    public static function generateCode(Forms\Get $get, Forms\Set $set): void
+    {
+        $category = ProductCategories::find($get('category_id'));                            
+        $brand = ProductBrands::find($get('brand_id'));                                                        
+        
+        if ($category === null || $brand === null) {
+            $set('code', "Generate Gagal!!");
+        } 
+        else {  
+            $last = ProductItems::where([
+                ['category_id', '=', $category->id],
+                ['brand_id', '=', $brand->id]
+            ])->max('code');
+            if ($last != null) {                                    
+                $tmp = substr($last, 7, 3)+1;
+                $set('code', $category->init."-".$brand->init.sprintf("%03s", $tmp));
+            } else {
+                $set('code', $category->init."-".$brand->init."001");
+            }                
+        }
     }
 
     // public static function getPeminjamanItem($infolist)

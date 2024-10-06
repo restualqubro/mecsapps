@@ -21,6 +21,8 @@ class ProductCategoriesResource extends Resource
 
     protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
 
+    protected static ?int $navigationSort = 4;
+
     protected static ?string $navigationIcon = 'heroicon-o-tag';
 
     protected static ?string $cluster = Products::class;
