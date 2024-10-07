@@ -199,15 +199,7 @@ class ProductItemsResource extends Resource
             }                
         }
     }
-
-    // public static function getPeminjamanItem($infolist)
-    // {
-    //     $getStockId = ProductStocks::where('item_id', $infolist->record->id)->pluck('id');    
-    //     $getPeminjaman = PeminjamanPart::where('stock_id', $getStockId)
-    //                                     ->where('status', 'Approve')
-    //                                     ->sum('qty');                        
-    //     return $getPeminjaman;
-    // }
+    
 
     public static function getPages(): array
     {

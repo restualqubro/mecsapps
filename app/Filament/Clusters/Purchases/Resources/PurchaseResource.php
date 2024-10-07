@@ -26,7 +26,11 @@ use Filament\Notifications\Notification;
 
 class PurchaseResource extends Resource
 {
+    protected static ?string $cluster = Purchases::class;
+
     protected static ?string $model = Purchase::class;
+
+    protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';
 
     protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;    
 
@@ -209,13 +213,13 @@ class PurchaseResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([
-                    Tables\Actions\ViewAction::make()->hiddenLabel()->tooltip('Detail'),
-                Tables\Actions\Action::make('pelunasan')->hiddenLabel()->tooltip('Pelunasan')
+                    Tables\Actions\ViewAction::make(),
+                Tables\Actions\Action::make('pelunasan')
                     ->label('Pelunasan')
                     ->color('warning')
                     ->icon('heroicon-o-queue-list')                    
                     ->form([  
-                        Forms\Components\Hidden::make('beli_id')                                                        
+                        Forms\Components\Hidden::make('purchase_id')                                                        
                             ->default(fn(Purchase $record): string => $record->id),                      
                         Forms\Components\TextInput::make('code')
                             ->label('Faktur Pembelian')
@@ -228,34 +232,34 @@ class PurchaseResource extends Resource
                             ->default(fn(Purchase $record): string => number_format($record->sisa, '0', '', '.')),
                         Forms\Components\Hidden::make('sisa')
                             ->default(fn(Purchase $record) => $record->sisa),
-                        Forms\Components\Hidden::make('tot_bayar')
-                            ->default(fn(Purchase $record) => $record->tot_bayar),                       
+                        Forms\Components\Hidden::make('totalbayar')
+                            ->default(fn(Purchase $record) => $record->totalbayar),                       
                         Forms\Components\TextInput::make('bayar')
                             ->label('Nominal Pembayaran')                            
                             ->required(),
                     ])
                     ->action(function (array $data): void {                        
                         $record[] = array();
-                        $record['user_id'] = auth()->user()->id;
-                        $record['beli_id'] = $data['beli_id'];
-                        $record['tanggal'] = $data['tanggal'];
+                        $record['user_id'] = auth()->id();
+                        $record['purchase_id'] = $data['purchase_id'];                        
                         $record['bayar']   = $data['bayar'];                        
                         $sisa = $data['sisa'] - $data['bayar'];
-                        $bayar = $data['tot_bayar'] + $data['bayar'];
+                        $bayar = $data['totalbayar'] + $data['bayar'];
                         if ($sisa > 0) {
                             $status = 'Utang';
                         } else {
                             $status = 'Lunas';
                         }
                         PurchaseUtang::Create($record);
-                        Purchase::where('id', $data['beli_id'])->update([
+                        Purchase::where('id', $data['purchase_id'])->update([
                             'sisa'      => $sisa,
                             'status'    => $status,
-                            'tot_bayar' => $bayar,
+                            'totalbayar' => $bayar,
                         ]);
                     })->visible(fn (Purchase $record): bool => $record->status === 'Utang')
                     ->modalWidth(MaxWidth::Medium),
-                Tables\Actions\EditAction::make()->hiddenLabel()->tooltip('Edit'),
+                Tables\Actions\EditAction::make()
+                    ->hidden(fn($record): bool => $record->status === 'Lunas' || $record->status === 'Cash'),
                 ]),                                
             ])
             ->bulkActions([
@@ -269,7 +273,7 @@ class PurchaseResource extends Resource
     {
         return $infolist
             ->schema([     
-                Section::make('Pembelian Details')
+                Section::make('Purchase Details')
                     ->schema([
                         TextEntry::make('code')
                             ->label('Nomor Faktur')
@@ -302,10 +306,10 @@ class PurchaseResource extends Resource
                 RepeatableEntry::make('purchaseDetails')
                     ->label('Detail Items')
                     ->schema([                                                                                                                                                                          
-                        TextEntry::make('stock.fullcode')                        
+                        TextEntry::make('productStocks.fullcode')                        
                             ->label('Code')
                             ->columnSpan(4),
-                        TextEntry::make('stock.product.name')                        
+                        TextEntry::make('productStocks.item.name')                        
                             ->label('Items')
                             ->columnSpan(4),
                         TextEntry::make('supplier_warranty')                          
@@ -373,6 +377,7 @@ class PurchaseResource extends Resource
                     } 
             } else { 
                 $sisa = $totalharga;
+                $set('status', 'Utang');
             }
         } else {
             return [

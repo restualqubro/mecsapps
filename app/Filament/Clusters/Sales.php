@@ -4,9 +4,9 @@ namespace App\Filament\Clusters;
 
 use Filament\Clusters\Cluster;
 
-class Purchases extends Cluster
-{    
-    protected static ?string $navigationIcon = 'heroicon-o-shopping-cart';    
+class Sales extends Cluster
+{
+    protected static ?string $navigationIcon = 'heroicon-o-shopping-bag';
 
     protected static ?string $navigationGroup = 'Transactions';
 }

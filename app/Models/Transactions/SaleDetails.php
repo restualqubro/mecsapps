@@ -7,22 +7,23 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class PurchaseDetails extends Model
+class SaleDetails extends Model
 {
     use HasFactory;
 
-    protected $table = 'purchase_details';
+    protected $table = 'sale_details';
     protected $fillable = [
-        'purchase_id',
+        'sale_id',
         'stock_id',
-        'qty',
-        'hbeli',
-        'supplier_warranty'
+        'qty', 
+        'hjual',
+        'disc',
+        'profit'
     ];
 
-    public function purchase(): BelongsTo
+    public function sale(): BelongsTo
     {
-        return $this->belongsTo(Purchase::class);
+        return $this->belongsTo(Sale::class);
     }
 
     public function productStocks(): BelongsTo
@@ -32,6 +33,6 @@ class PurchaseDetails extends Model
 
     public function getJumlahAttribute()
     {
-        return ($this->qty * $this->hbeli);
+        return ($this->qty * ($this->hjual - $this->disc));
     }
 }

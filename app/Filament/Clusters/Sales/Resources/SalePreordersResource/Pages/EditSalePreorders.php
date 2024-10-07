@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Clusters\Purchases\Resources\PurchaseResource\Pages;
+namespace App\Filament\Clusters\Sales\Resources\SalePreordersResource\Pages;
 
-use App\Filament\Clusters\Purchases\Resources\PurchaseResource;
+use App\Filament\Clusters\Sales\Resources\SalePreordersResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
-class EditPurchase extends EditRecord
+class EditSalePreorders extends EditRecord
 {
-    protected static string $resource = PurchaseResource::class;
+    protected static string $resource = SalePreordersResource::class;
 
     protected function getHeaderActions(): array
     {

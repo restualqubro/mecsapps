@@ -15,7 +15,8 @@ return new class extends Migration
         DB::unprepared('
         CREATE TRIGGER tr_purchase_added AFTER INSERT ON `purchase_details` FOR EACH ROW
             BEGIN
-                UPDATE product_stocks SET product_stocks.stok = product_stocks.stok + NEW.qty
+                UPDATE product_stocks SET 
+                product_stocks.stok = product_stocks.stok + NEW.qty
                 WHERE id = NEW.stock_id;
             END
         ');
