@@ -33,7 +33,7 @@ class CreateInvoice extends CreateRecord
             'user_id'       => Auth::id()
         ]);
         ServiceData::where('id', $selesai->service->id)->update(['status' => 'Keluar']);                  
-        return dd($data);        
+        return $data;        
     }    
 
     protected function getRedirectUrl(): string

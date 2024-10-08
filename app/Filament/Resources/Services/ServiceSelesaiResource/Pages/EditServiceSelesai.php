@@ -28,9 +28,8 @@ class EditServiceSelesai extends EditRecord
     {        
         $service = ServiceData::where('id', $data['service_id'])->first();
         $teknisi = User::where('id', $data['teknisi_id'])->first();
-        $data['service_id'] = $data['service_id'];
-        $data['teknisi'] = $teknisi->name;
         $data['service_id'] = $service->code;
+        $data['teknisi'] = $teknisi->name;        
         $data['reference'] = $data['reference'];
         $data['name'] = $service->customer->name;
         $data['merk'] = $service->merk;

@@ -65,8 +65,9 @@ class ServiceSelesaiResource extends Resource
                                             Forms\Components\Select::make('service_id')
                                                 ->label('Kode Service')
                                                 ->options(
-                                                    ServiceData::all()->where('status', 'Proses')->pluck('code', 'id')
+                                                    ServiceData::where('status', 'Proses')->get()->pluck('code', 'id')
                                                 )
+                                                ->searchable()
                                                 ->live()
                                                 ->afterStateUpdated(function($state, Forms\Get $get, Forms\Set $set) {
                                                     $service = ServiceData::find($state);
@@ -145,15 +146,15 @@ class ServiceSelesaiResource extends Resource
                                             ->columnSpan([
                                                 'md' => 1
                                             ])
-                                            ->live()
+                                            ->live(onBlur:true)
                                             ->afterStateUpdated(
                                                 function (Forms\Get $get, Forms\Set $set) {
                                                     $servicecatalog_id = $get('servicecatalog_id');
                                                     $catalog = ServiceCatalog::find($servicecatalog_id);
                                                     if($catalog)
                                                     {                                                        
-                                                        $disc = $get('service_disc');                                                                                                               
-                                                        $jumlah = $get('service_qty') * ($catalog->biaya_max - $disc) ;
+                                                        $disc = $get('catalog_disc');                                                                                                               
+                                                        $jumlah = $get('catalog_qty') * ($catalog->biaya_max - $disc) ;
                                                         $set('service_jumlah', number_format($jumlah, 0, '', '.'));
                                                     }                                                                                                        
                                                 }
@@ -315,7 +316,8 @@ class ServiceSelesaiResource extends Resource
                     ->label('KODE SERVICE')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('service.customer.name')
-                    ->label('NAMA CUSTOMER'),
+                    ->label('NAMA CUSTOMER')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('subtotal_service')
                     ->label('SUBTOTAL SERVICE')
                     ->money('IDR'),
@@ -327,6 +329,7 @@ class ServiceSelesaiResource extends Resource
                     ->money('IDR'),
                 
             ])
+            ->defaultSort('created_at', 'DESC')
             ->filters([
                 
             ])
@@ -449,13 +452,13 @@ class ServiceSelesaiResource extends Resource
 
     public static function updateTotalService(Forms\Get $get, Forms\Set $set): void
     {        
-        $selectedCatalog = collect($get('detailService'))->filter(fn($item) => !empty($item['service_qty']) && !empty($item['biaya']));                
+        $selectedCatalog = collect($get('detailService'))->filter(fn($item) => !empty($item['catalog_qty']) && !empty($item['biaya']));                
         $subtotal = 0;
         $totaldiscount = 0;
         $total = 0;        
         foreach($selectedCatalog as $item) {
-            $subtotal = $subtotal +  $item['service_qty'] * $item['biaya'] ;
-            $totaldiscount += $item['service_disc'] * $item['service_qty'];      
+            $subtotal = $subtotal +  $item['catalog_qty'] * $item['biaya'] ;
+            $totaldiscount += $item['catalog_disc'] * $item['catalog_qty'];      
             $total = $subtotal - $totaldiscount;
         }                                          
         $set('subtotal_service', number_format($subtotal, 0, '', '.'));

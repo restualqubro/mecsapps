@@ -17,9 +17,11 @@ use Filament\Infolists\Infolist;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\RepeatableEntry;
+use Filament\Actions\Action;
 use Carbon\Carbon;
 use Filament\Support\Enums\FontWeight;
 use Illuminate\Support\Facades\Auth;
+
 
 class InvoiceResource extends Resource
 {
@@ -40,19 +42,9 @@ class InvoiceResource extends Resource
                     ->schema([
                         Forms\Components\TextInput::make('code')
                             ->label('Faktur Invoice Service')
-                            ->default(function() {
-                                $date = Carbon::now()->format('my');
-                                $last = Invoices::whereRaw("MID(code, 5, 4) = $date")->max('code');                                        
-                                if ($last != null) {                                                                                            
-                                    $tmp = substr($last, 8, 4)+1;
-                                    return "FKS-".$date.sprintf("%03s", $tmp);                                                                            
-                                } else {
-                                    return "FKS-".$date."001";
-                                }
-                            })
+                            ->default(fn() => self::GetCode())                           
                             ->readonly()
-                            ->required()
-                            ->columnSpan(2),   
+                            ->required(),   
                         Forms\Components\Select::make('selesai_id')
                             ->label('Kode Service')
                             ->searchable()                                       
@@ -68,57 +60,64 @@ class InvoiceResource extends Resource
                             ->afterStateUpdated(function($state, callable $set) {
                                 $selesai = ServiceSelesai::find($state);                         
                                 if ($selesai) {
-                                    $set('customer_name', $selesai->service->customer->name);                        
-                                }
-                                // $set('customer_name', $selesai->service->customer->name);                        
-                            })
-                            ->columnSpan(2),
+                                    $set('customer_name', $selesai->service->customer->name);  
+                                    if ($selesai->reference === NULL)
+                                    {   
+                                        $set('reference', '');                                     
+                                    } else {                                        
+                                        $set('reference', $selesai->sale->code);
+                                    }
+                                }                                
+                            }),
                         Forms\Components\TextInput::make('customer_name')
                             ->label('Nama Customer')
-                            ->disabled()
-                            ->columnSpan(2),    
+                            ->disabled(), 
+                        Forms\Components\TextInput::make('reference')
+                            ->label('Faktur Penjualan')
+                            ->disabled(),   
                         Forms\Components\Actions::make([
-                            Forms\Components\Actions\Action::make('Generate')
+                            Forms\Components\Actions\Action::make('Generate')                                
                                 ->action(function (Forms\Get $get, Forms\Set $set) { 
                                     $selesai = ServiceSelesai::find($get('selesai_id'));                                                                                                                                  
-                                    if ($selesai) {
-                                        $set('subtotal_products', number_format($selesai->subtotal_products, 0, '', '.'));
-                                        $set('totaldiscount_products', number_format($selesai->totaldiscount_products, 0, '', '.'));
+                                    if ($selesai) {                                        
                                         $set('subtotal_service', number_format($selesai->subtotal_service, 0, '', '.'));
                                         $set('totaldiscount_service', number_format($selesai->totaldiscount_service, 0, '', '.'));                                
-                                        $set('total', number_format($selesai->total, 0, '', '.'));
+                                        $set('total', number_format($selesai->total, 0, '', '.'));    
+                                        return [
+                                            Action::make('delete')
+                                                ->requiresConfirmation(),
+                                        ];                                    
                                     } 
-                                    else {  
-                                        $set('subtotal_products', 'Generate Kode gagal!!');
-                                        $set('totaldiscount_products', 'Generate Kode gagal!!');
+                                    else {                                          
                                         $set('subtotal_service', 'Generate Kode gagal!!');
                                         $set('totaldiscount_service', 'Generate Kode gagal!!');                                
                                         $set('total', 'Generate Kode gagal!!');              
                                     }
                                 }),
-                            ])->columnSpan(6),                           
-                    ])->columns(6),
+                            ])->columnSpan('full'),                           
+                    ])->columns([
+                        'sm' => 1,
+                        'md' => 1,
+                        'xl' => 2,
+                        '2xl' => 2,
+                    ]),                
                 Forms\Components\Card::make()
                     ->schema([                                                   
                         Forms\Components\TextInput::make('subtotal_service')
                             ->label('Subtotal Service')
-                            ->disabled()
-                            ->columnSpan(3),                                
+                            ->disabled(),                                
                         Forms\Components\TextInput::make('totaldiscount_service')
                             ->label('Total Discount Service')
-                            ->disabled()
-                            ->columnSpan(3),    
+                            ->disabled(),    
                         Forms\Components\TextInput::make('total')
                             ->label('Total Invoice')
-                            ->disabled()
-                            ->columnSpan(2),
+                            ->disabled(),
                         Forms\Components\TextInput::make('totalbayar')
                             ->label('Total Pembayaran')
                             ->numeric()
                             ->required()     
-                            ->default(0)               
-                            ->columnSpan(2)
-                            ->reactive()
+                            ->default(0)
+                            ->live(onBlur:true)                            
                             ->afterStateUpdated(function (Forms\Get $get, Forms\Set $set) {
                                 self::updateSisaPembayaran($get, $set);
                             }),                                                                                     
@@ -126,11 +125,15 @@ class InvoiceResource extends Resource
                             ->label('Sisa Pembayaran')                            
                             ->disabled()
                             ->dehydrated()
-                            ->required()
-                            ->columnSpan(2),        
+                            ->required(),        
                         Forms\Components\Textarea::make('description')             
-                            ->label('Keterangan')
-                            ->columnSpan(6)
+                            ->label('Keterangan')                            
+                        ])
+                        ->columns([
+                            'sm' => 1,
+                            'md' => 1,
+                            'xl' => 3,
+                            '2xl' => 3,
                         ])                    
             ]);             
     }
@@ -140,9 +143,12 @@ class InvoiceResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('code')
-                    ->label('Kode Faktur'),
+                    ->label('Kode Faktur')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('selesai.service.customer.name')
-                    ->label('Customer'),
+                    ->label('Customer')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('selesai.service.merk')
                     ->label('Merk'),
                 Tables\Columns\TextColumn::make('selesai.service.seri')
@@ -227,16 +233,7 @@ class InvoiceResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
-    }
-
-    public static function updateSisaPembayaran(Forms\Get $get, Forms\Set $set): void
-    {
-        $total = (int)str_replace('.', '', $get('total'));                             
-
-        $sisa = $total - $get('totalbayar');        
-        $set('sisa', number_format($sisa, 0, '', '.'));        
-
-    }
+    }    
 
     public static function infolist(Infolist $infolist): Infolist
     {
@@ -298,6 +295,28 @@ class InvoiceResource extends Resource
                     ->columnSpan('full')                                 
                     ->grid(2),                   
             ]);
+    }
+
+    public static function updateSisaPembayaran(Forms\Get $get, Forms\Set $set): void
+    {
+        $total = (int)str_replace('.', '', $get('total'));                                     
+        $sisa = $total - $get('totalbayar');        
+        $set('sisa', number_format($sisa, 0, '', '.'));        
+
+    }
+
+    public static function getCode(): string
+    {
+        $date = Carbon::now()->format('my');
+        $last = Invoices::whereRaw("MID(code, 5, 4) = $date")->max('code');                                        
+        if ($last != null) {                                                                                            
+            $tmp = substr($last, 8, 4)+1;
+            $code =  "FKS-".$date.sprintf("%03s", $tmp);                                                                            
+        } else {
+            $code = "FKS-".$date."001";
+        }
+
+        return $code;
     }
 
     public static function getPages(): array
