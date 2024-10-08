@@ -10,5 +10,7 @@ class Services extends Cluster
 
     protected static ?string $navigationLabel = 'Categories & Catalog';
 
+    protected static ?int $navigationSort = 99;
+
     protected static ?string $navigationIcon = 'heroicon-o-tag';
 }
