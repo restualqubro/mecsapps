@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Policies\Products;
+namespace App\Policies;
 
 use App\Models\User;
-use App\Models\Products\Stockouts;
+use App\Models\Services\ServiceSelesai;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class StockoutsPolicy
+class ServiceSelesaiPolicy
 {
     use HandlesAuthorization;
 
@@ -15,15 +15,15 @@ class StockoutsPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view_any_stocks::stockouts');
+        return $user->can('view_any_services::service::selesai');
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Stockouts $stockouts): bool
+    public function view(User $user, ServiceSelesai $serviceSelesai): bool
     {
-        return $user->can('view_stocks::stockouts');
+        return $user->can('view_services::service::selesai');
     }
 
     /**
@@ -31,23 +31,23 @@ class StockoutsPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create_stocks::stockouts');
+        return $user->can('create_services::service::selesai');
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Stockouts $stockouts): bool
+    public function update(User $user, ServiceSelesai $serviceSelesai): bool
     {
-        return $user->can('update_stocks::stockouts');
+        return $user->can('update_services::service::selesai');
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Stockouts $stockouts): bool
+    public function delete(User $user, ServiceSelesai $serviceSelesai): bool
     {
-        return $user->can('delete_stocks::stockouts');
+        return $user->can('delete_services::service::selesai');
     }
 
     /**
@@ -55,13 +55,13 @@ class StockoutsPolicy
      */
     public function deleteAny(User $user): bool
     {
-        return $user->can('delete_any_stocks::stockouts');
+        return $user->can('delete_any_services::service::selesai');
     }
 
     /**
      * Determine whether the user can permanently delete.
      */
-    public function forceDelete(User $user, Stockouts $stockouts): bool
+    public function forceDelete(User $user, ServiceSelesai $serviceSelesai): bool
     {
         return $user->can('{{ ForceDelete }}');
     }
@@ -77,7 +77,7 @@ class StockoutsPolicy
     /**
      * Determine whether the user can restore.
      */
-    public function restore(User $user, Stockouts $stockouts): bool
+    public function restore(User $user, ServiceSelesai $serviceSelesai): bool
     {
         return $user->can('{{ Restore }}');
     }
@@ -93,7 +93,7 @@ class StockoutsPolicy
     /**
      * Determine whether the user can replicate.
      */
-    public function replicate(User $user, Stockouts $stockouts): bool
+    public function replicate(User $user, ServiceSelesai $serviceSelesai): bool
     {
         return $user->can('{{ Replicate }}');
     }

@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Policies\Products;
+namespace App\Policies;
 
 use App\Models\User;
-use App\Models\Products\PengembalianPart;
+use App\Models\Transactions\SalePreorders;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class PengembalianPartPolicy
+class SalePreordersPolicy
 {
     use HandlesAuthorization;
 
@@ -15,15 +15,15 @@ class PengembalianPartPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view_any_pengembalian::part');
+        return $user->can('view_any_sale::preorders');
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, PengembalianPart $pengembalianPart): bool
+    public function view(User $user, SalePreorders $salePreorders): bool
     {
-        return $user->can('view_pengembalian::part');
+        return $user->can('view_sale::preorders');
     }
 
     /**
@@ -31,23 +31,23 @@ class PengembalianPartPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create_pengembalian::part');
+        return $user->can('create_sale::preorders');
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, PengembalianPart $pengembalianPart): bool
+    public function update(User $user, SalePreorders $salePreorders): bool
     {
-        return $user->can('update_pengembalian::part');
+        return $user->can('update_sale::preorders');
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, PengembalianPart $pengembalianPart): bool
+    public function delete(User $user, SalePreorders $salePreorders): bool
     {
-        return $user->can('delete_pengembalian::part');
+        return $user->can('delete_sale::preorders');
     }
 
     /**
@@ -55,13 +55,13 @@ class PengembalianPartPolicy
      */
     public function deleteAny(User $user): bool
     {
-        return $user->can('delete_any_pengembalian::part');
+        return $user->can('delete_any_sale::preorders');
     }
 
     /**
      * Determine whether the user can permanently delete.
      */
-    public function forceDelete(User $user, PengembalianPart $pengembalianPart): bool
+    public function forceDelete(User $user, SalePreorders $salePreorders): bool
     {
         return $user->can('{{ ForceDelete }}');
     }
@@ -77,7 +77,7 @@ class PengembalianPartPolicy
     /**
      * Determine whether the user can restore.
      */
-    public function restore(User $user, PengembalianPart $pengembalianPart): bool
+    public function restore(User $user, SalePreorders $salePreorders): bool
     {
         return $user->can('{{ Restore }}');
     }
@@ -93,7 +93,7 @@ class PengembalianPartPolicy
     /**
      * Determine whether the user can replicate.
      */
-    public function replicate(User $user, PengembalianPart $pengembalianPart): bool
+    public function replicate(User $user, SalePreorders $salePreorders): bool
     {
         return $user->can('{{ Replicate }}');
     }

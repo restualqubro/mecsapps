@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Policies\Products;
+namespace App\Policies;
 
 use App\Models\User;
-use App\Models\Products\Stockins;
+use App\Models\Products\Stockouts;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class StockinsPolicy
+class StockoutsPolicy
 {
     use HandlesAuthorization;
 
@@ -15,15 +15,15 @@ class StockinsPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view_any_stocks::stockins');
+        return $user->can('view_any_stocks::stockouts');
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Stockins $stockins): bool
+    public function view(User $user, Stockouts $stockouts): bool
     {
-        return $user->can('view_stocks::stockins');
+        return $user->can('view_stocks::stockouts');
     }
 
     /**
@@ -31,23 +31,23 @@ class StockinsPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create_stocks::stockins');
+        return $user->can('create_stocks::stockouts');
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Stockins $stockins): bool
+    public function update(User $user, Stockouts $stockouts): bool
     {
-        return $user->can('update_stocks::stockins');
+        return $user->can('update_stocks::stockouts');
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Stockins $stockins): bool
+    public function delete(User $user, Stockouts $stockouts): bool
     {
-        return $user->can('delete_stocks::stockins');
+        return $user->can('delete_stocks::stockouts');
     }
 
     /**
@@ -55,13 +55,13 @@ class StockinsPolicy
      */
     public function deleteAny(User $user): bool
     {
-        return $user->can('delete_any_stocks::stockins');
+        return $user->can('delete_any_stocks::stockouts');
     }
 
     /**
      * Determine whether the user can permanently delete.
      */
-    public function forceDelete(User $user, Stockins $stockins): bool
+    public function forceDelete(User $user, Stockouts $stockouts): bool
     {
         return $user->can('{{ ForceDelete }}');
     }
@@ -77,7 +77,7 @@ class StockinsPolicy
     /**
      * Determine whether the user can restore.
      */
-    public function restore(User $user, Stockins $stockins): bool
+    public function restore(User $user, Stockouts $stockouts): bool
     {
         return $user->can('{{ Restore }}');
     }
@@ -93,7 +93,7 @@ class StockinsPolicy
     /**
      * Determine whether the user can replicate.
      */
-    public function replicate(User $user, Stockins $stockins): bool
+    public function replicate(User $user, Stockouts $stockouts): bool
     {
         return $user->can('{{ Replicate }}');
     }

@@ -112,7 +112,7 @@ class SalePreordersResource extends Resource
             ->actions([
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\Action::make('print')                    
-                        ->url(fn ($record) => '/print/fakturpreorder/'.$record->id)
+                        ->url(fn ($record) => 'print/fakturpreorder/'.$record->id)
                         ->color('warning')
                         ->icon('heroicon-o-printer')                    
                         ->openUrlInNewTab(),    

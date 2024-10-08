@@ -21,6 +21,7 @@ use Filament\Actions\Action;
 use Carbon\Carbon;
 use Filament\Support\Enums\FontWeight;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Builder;
 
 
 class InvoiceResource extends Resource
@@ -228,11 +229,13 @@ class InvoiceResource extends Resource
                 Tables\Actions\DeleteAction::make(),                
                 ])                    
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
+            ->modifyQueryUsing(function (Builder $query) { 
+                if (auth()->user()->role === 'teknisi') {
+                    return $query->whereHas('selesai', function ($q) {
+                        $q->where('teknisi_id', auth()->id());
+                    });                  
+                }                                
+            });
     }    
 
     public static function infolist(Infolist $infolist): Infolist
@@ -243,11 +246,11 @@ class InvoiceResource extends Resource
                     ->schema([
                         TextEntry::make('code')
                             ->label('Kode Service')
-                            ->weight(FontWeight::Bold), 
-                        TextEntry::make('updated_at')
-                            ->label('Last Updated'), 
+                            ->weight(FontWeight::Bold),                        
                         TextEntry::make('selesai.service.customer.name')
                             ->label('Nama Customer'), 
+                        TextEntry::make('selesai.teknisi.name')
+                            ->label('Nama Teknisi'),
                         TextEntry::make('selesai.service.merk')
                             ->label('Merk/Brand'),
                         TextEntry::make('selesai.service.seri')

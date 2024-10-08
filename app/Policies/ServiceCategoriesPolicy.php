@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Policies\Products;
+namespace App\Policies;
 
 use App\Models\User;
-use App\Models\Products\PeminjamanPart;
+use App\Models\Services\ServiceCategories;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class PeminjamanPartPolicy
+class ServiceCategoriesPolicy
 {
     use HandlesAuthorization;
 
@@ -15,15 +15,15 @@ class PeminjamanPartPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view_any_peminjaman::part');
+        return $user->can('view_any_service::categories');
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, PeminjamanPart $peminjamanPart): bool
+    public function view(User $user, ServiceCategories $serviceCategories): bool
     {
-        return $user->can('view_peminjaman::part');
+        return $user->can('view_service::categories');
     }
 
     /**
@@ -31,23 +31,23 @@ class PeminjamanPartPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create_peminjaman::part');
+        return $user->can('create_service::categories');
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, PeminjamanPart $peminjamanPart): bool
+    public function update(User $user, ServiceCategories $serviceCategories): bool
     {
-        return $user->can('update_peminjaman::part');
+        return $user->can('update_service::categories');
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, PeminjamanPart $peminjamanPart): bool
+    public function delete(User $user, ServiceCategories $serviceCategories): bool
     {
-        return $user->can('delete_peminjaman::part');
+        return $user->can('delete_service::categories');
     }
 
     /**
@@ -55,13 +55,13 @@ class PeminjamanPartPolicy
      */
     public function deleteAny(User $user): bool
     {
-        return $user->can('delete_any_peminjaman::part');
+        return $user->can('delete_any_service::categories');
     }
 
     /**
      * Determine whether the user can permanently delete.
      */
-    public function forceDelete(User $user, PeminjamanPart $peminjamanPart): bool
+    public function forceDelete(User $user, ServiceCategories $serviceCategories): bool
     {
         return $user->can('{{ ForceDelete }}');
     }
@@ -77,7 +77,7 @@ class PeminjamanPartPolicy
     /**
      * Determine whether the user can restore.
      */
-    public function restore(User $user, PeminjamanPart $peminjamanPart): bool
+    public function restore(User $user, ServiceCategories $serviceCategories): bool
     {
         return $user->can('{{ Restore }}');
     }
@@ -93,7 +93,7 @@ class PeminjamanPartPolicy
     /**
      * Determine whether the user can replicate.
      */
-    public function replicate(User $user, PeminjamanPart $peminjamanPart): bool
+    public function replicate(User $user, ServiceCategories $serviceCategories): bool
     {
         return $user->can('{{ Replicate }}');
     }

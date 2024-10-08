@@ -21,6 +21,14 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Print\ServiceReceipt;
+use App\Http\Controllers\Print\SelesaiReceipt;
+use App\Http\Controllers\Print\InvoiceReceipt;
+use App\Http\Controllers\Print\FakturJual;
+use App\Http\Controllers\Print\FakturPreorder;
+use App\Http\Controllers\Print\StockMinus;
+use App\Http\Controllers\Print\ServiceData;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -29,7 +37,7 @@ class AdminPanelProvider extends PanelProvider
         return $panel            
             ->default()
             ->id('admin')
-            ->path('admin')
+            ->path('')
             ->login()
             ->favicon(fn (GeneralSettings $settings) => Storage::url($settings->site_favicon))
             ->brandName(fn (GeneralSettings $settings) => $settings->brand_name)
@@ -44,6 +52,8 @@ class AdminPanelProvider extends PanelProvider
                      ->label('Services'),
                 NavigationGroup::make()
                      ->label('Transactions'),
+                    NavigationGroup::make()
+                     ->label('Finances'),
                 NavigationGroup::make()
                      ->label('Stocks'),                
                 NavigationGroup::make()
@@ -57,6 +67,19 @@ class AdminPanelProvider extends PanelProvider
             ->pages([
                 Pages\Dashboard::class,
             ])
+            ->routes(function () {
+                //  add to /portal/*
+                Route::post('/whatsapp', function () {
+                    return redirect()->away('wa.me');
+                });     
+                Route::get('/print/servicereceipt/{id}', [ServiceReceipt::class, 'print']);
+                Route::get('/print/selesaireceipt/{id}', [SelesaiReceipt::class, 'print']);
+                Route::get('/print/invoicereceipt/{id}', [InvoiceReceipt::class, 'print']);
+                Route::get('/print/fakturjual/{id}', [FakturJual::class, 'print']);
+                Route::get('/print/fakturpreorder/{id}', [FakturPreorder::class, 'print']);
+                Route::get('/print/reportstockminus/', [StockMinus::class, 'print']);
+                Route::get('/print/reportservicedata/', [ServiceData::class, 'print']);
+            })
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,

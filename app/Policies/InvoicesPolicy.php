@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Policies\Products;
+namespace App\Policies;
 
 use App\Models\User;
-use App\Models\Products\ProductItems;
+use App\Models\Transactions\Invoices;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class ProductItemsPolicy
+class InvoicesPolicy
 {
     use HandlesAuthorization;
 
@@ -15,15 +15,15 @@ class ProductItemsPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view_any_product::items');
+        return $user->can('view_any_transactions::invoice');
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, ProductItems $productItems): bool
+    public function view(User $user, Invoices $invoices): bool
     {
-        return $user->can('view_product::items');
+        return $user->can('view_transactions::invoice');
     }
 
     /**
@@ -31,23 +31,23 @@ class ProductItemsPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create_product::items');
+        return $user->can('create_transactions::invoice');
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, ProductItems $productItems): bool
+    public function update(User $user, Invoices $invoices): bool
     {
-        return $user->can('update_product::items');
+        return $user->can('update_transactions::invoice');
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, ProductItems $productItems): bool
+    public function delete(User $user, Invoices $invoices): bool
     {
-        return $user->can('delete_product::items');
+        return $user->can('delete_transactions::invoice');
     }
 
     /**
@@ -55,13 +55,13 @@ class ProductItemsPolicy
      */
     public function deleteAny(User $user): bool
     {
-        return $user->can('delete_any_product::items');
+        return $user->can('delete_any_transactions::invoice');
     }
 
     /**
      * Determine whether the user can permanently delete.
      */
-    public function forceDelete(User $user, ProductItems $productItems): bool
+    public function forceDelete(User $user, Invoices $invoices): bool
     {
         return $user->can('{{ ForceDelete }}');
     }
@@ -77,7 +77,7 @@ class ProductItemsPolicy
     /**
      * Determine whether the user can restore.
      */
-    public function restore(User $user, ProductItems $productItems): bool
+    public function restore(User $user, Invoices $invoices): bool
     {
         return $user->can('{{ Restore }}');
     }
@@ -93,7 +93,7 @@ class ProductItemsPolicy
     /**
      * Determine whether the user can replicate.
      */
-    public function replicate(User $user, ProductItems $productItems): bool
+    public function replicate(User $user, Invoices $invoices): bool
     {
         return $user->can('{{ Replicate }}');
     }

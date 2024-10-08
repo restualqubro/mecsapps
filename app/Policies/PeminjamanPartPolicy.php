@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Policies\Products;
+namespace App\Policies;
 
 use App\Models\User;
-use App\Models\Products\StockCategories;
+use App\Models\Products\PeminjamanPart;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class StockCategoriesPolicy
+class PeminjamanPartPolicy
 {
     use HandlesAuthorization;
 
@@ -15,15 +15,15 @@ class StockCategoriesPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view_any_stocks::stock::categories');
+        return $user->can('view_any_peminjaman::part');
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, StockCategories $stockCategories): bool
+    public function view(User $user, PeminjamanPart $peminjamanPart): bool
     {
-        return $user->can('view_stocks::stock::categories');
+        return $user->can('view_peminjaman::part');
     }
 
     /**
@@ -31,23 +31,23 @@ class StockCategoriesPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create_stocks::stock::categories');
+        return $user->can('create_peminjaman::part');
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, StockCategories $stockCategories): bool
+    public function update(User $user, PeminjamanPart $peminjamanPart): bool
     {
-        return $user->can('update_stocks::stock::categories');
+        return $user->can('update_peminjaman::part');
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, StockCategories $stockCategories): bool
+    public function delete(User $user, PeminjamanPart $peminjamanPart): bool
     {
-        return $user->can('delete_stocks::stock::categories');
+        return $user->can('delete_peminjaman::part');
     }
 
     /**
@@ -55,13 +55,13 @@ class StockCategoriesPolicy
      */
     public function deleteAny(User $user): bool
     {
-        return $user->can('delete_any_stocks::stock::categories');
+        return $user->can('delete_any_peminjaman::part');
     }
 
     /**
      * Determine whether the user can permanently delete.
      */
-    public function forceDelete(User $user, StockCategories $stockCategories): bool
+    public function forceDelete(User $user, PeminjamanPart $peminjamanPart): bool
     {
         return $user->can('{{ ForceDelete }}');
     }
@@ -77,7 +77,7 @@ class StockCategoriesPolicy
     /**
      * Determine whether the user can restore.
      */
-    public function restore(User $user, StockCategories $stockCategories): bool
+    public function restore(User $user, PeminjamanPart $peminjamanPart): bool
     {
         return $user->can('{{ Restore }}');
     }
@@ -93,7 +93,7 @@ class StockCategoriesPolicy
     /**
      * Determine whether the user can replicate.
      */
-    public function replicate(User $user, StockCategories $stockCategories): bool
+    public function replicate(User $user, PeminjamanPart $peminjamanPart): bool
     {
         return $user->can('{{ Replicate }}');
     }

@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Policies\Connect;
+namespace App\Policies;
 
 use App\Models\User;
-use App\Models\Connect\Customers;
+use App\Models\Transactions\Sale;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class CustomersPolicy
+class SalePolicy
 {
     use HandlesAuthorization;
 
@@ -15,15 +15,15 @@ class CustomersPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view_any_connect::customers');
+        return $user->can('view_any_sale');
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Customers $customers): bool
+    public function view(User $user, Sale $sale): bool
     {
-        return $user->can('view_connect::customers');
+        return $user->can('view_sale');
     }
 
     /**
@@ -31,23 +31,23 @@ class CustomersPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create_connect::customers');
+        return $user->can('create_sale');
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Customers $customers): bool
+    public function update(User $user, Sale $sale): bool
     {
-        return $user->can('update_connect::customers');
+        return $user->can('update_sale');
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Customers $customers): bool
+    public function delete(User $user, Sale $sale): bool
     {
-        return $user->can('delete_connect::customers');
+        return $user->can('delete_sale');
     }
 
     /**
@@ -55,13 +55,13 @@ class CustomersPolicy
      */
     public function deleteAny(User $user): bool
     {
-        return $user->can('delete_any_connect::customers');
+        return $user->can('delete_any_sale');
     }
 
     /**
      * Determine whether the user can permanently delete.
      */
-    public function forceDelete(User $user, Customers $customers): bool
+    public function forceDelete(User $user, Sale $sale): bool
     {
         return $user->can('{{ ForceDelete }}');
     }
@@ -77,7 +77,7 @@ class CustomersPolicy
     /**
      * Determine whether the user can restore.
      */
-    public function restore(User $user, Customers $customers): bool
+    public function restore(User $user, Sale $sale): bool
     {
         return $user->can('{{ Restore }}');
     }
@@ -93,7 +93,7 @@ class CustomersPolicy
     /**
      * Determine whether the user can replicate.
      */
-    public function replicate(User $user, Customers $customers): bool
+    public function replicate(User $user, Sale $sale): bool
     {
         return $user->can('{{ Replicate }}');
     }

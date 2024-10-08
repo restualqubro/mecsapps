@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Policies\Connect;
+namespace App\Policies;
 
 use App\Models\User;
-use App\Models\Connect\Suppliers;
+use App\Models\Services\ServiceTopartner;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class SuppliersPolicy
+class ServiceTopartnerPolicy
 {
     use HandlesAuthorization;
 
@@ -15,15 +15,15 @@ class SuppliersPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view_any_connect::suppliers');
+        return $user->can('view_any_services::service::topartner');
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Suppliers $suppliers): bool
+    public function view(User $user, ServiceTopartner $serviceTopartner): bool
     {
-        return $user->can('view_connect::suppliers');
+        return $user->can('view_services::service::topartner');
     }
 
     /**
@@ -31,23 +31,23 @@ class SuppliersPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create_connect::suppliers');
+        return $user->can('create_services::service::topartner');
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Suppliers $suppliers): bool
+    public function update(User $user, ServiceTopartner $serviceTopartner): bool
     {
-        return $user->can('update_connect::suppliers');
+        return $user->can('update_services::service::topartner');
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Suppliers $suppliers): bool
+    public function delete(User $user, ServiceTopartner $serviceTopartner): bool
     {
-        return $user->can('delete_connect::suppliers');
+        return $user->can('delete_services::service::topartner');
     }
 
     /**
@@ -55,13 +55,13 @@ class SuppliersPolicy
      */
     public function deleteAny(User $user): bool
     {
-        return $user->can('delete_any_connect::suppliers');
+        return $user->can('delete_any_services::service::topartner');
     }
 
     /**
      * Determine whether the user can permanently delete.
      */
-    public function forceDelete(User $user, Suppliers $suppliers): bool
+    public function forceDelete(User $user, ServiceTopartner $serviceTopartner): bool
     {
         return $user->can('{{ ForceDelete }}');
     }
@@ -77,7 +77,7 @@ class SuppliersPolicy
     /**
      * Determine whether the user can restore.
      */
-    public function restore(User $user, Suppliers $suppliers): bool
+    public function restore(User $user, ServiceTopartner $serviceTopartner): bool
     {
         return $user->can('{{ Restore }}');
     }
@@ -93,7 +93,7 @@ class SuppliersPolicy
     /**
      * Determine whether the user can replicate.
      */
-    public function replicate(User $user, Suppliers $suppliers): bool
+    public function replicate(User $user, ServiceTopartner $serviceTopartner): bool
     {
         return $user->can('{{ Replicate }}');
     }

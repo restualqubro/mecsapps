@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Policies\Products;
+namespace App\Policies;
 
 use App\Models\User;
-use App\Models\Products\ProductCategories;
+use App\Models\Services\ServiceData;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class ProductCategoriesPolicy
+class ServiceDataPolicy
 {
     use HandlesAuthorization;
 
@@ -15,15 +15,15 @@ class ProductCategoriesPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view_any_product::categories');
+        return $user->can('view_any_services::service::data');
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, ProductCategories $productCategories): bool
+    public function view(User $user, ServiceData $serviceData): bool
     {
-        return $user->can('view_product::categories');
+        return $user->can('view_services::service::data');
     }
 
     /**
@@ -31,23 +31,23 @@ class ProductCategoriesPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create_product::categories');
+        return $user->can('create_services::service::data');
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, ProductCategories $productCategories): bool
+    public function update(User $user, ServiceData $serviceData): bool
     {
-        return $user->can('update_product::categories');
+        return $user->can('update_services::service::data');
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, ProductCategories $productCategories): bool
+    public function delete(User $user, ServiceData $serviceData): bool
     {
-        return $user->can('delete_product::categories');
+        return $user->can('delete_services::service::data');
     }
 
     /**
@@ -55,13 +55,13 @@ class ProductCategoriesPolicy
      */
     public function deleteAny(User $user): bool
     {
-        return $user->can('delete_any_product::categories');
+        return $user->can('delete_any_services::service::data');
     }
 
     /**
      * Determine whether the user can permanently delete.
      */
-    public function forceDelete(User $user, ProductCategories $productCategories): bool
+    public function forceDelete(User $user, ServiceData $serviceData): bool
     {
         return $user->can('{{ ForceDelete }}');
     }
@@ -77,7 +77,7 @@ class ProductCategoriesPolicy
     /**
      * Determine whether the user can restore.
      */
-    public function restore(User $user, ProductCategories $productCategories): bool
+    public function restore(User $user, ServiceData $serviceData): bool
     {
         return $user->can('{{ Restore }}');
     }
@@ -93,7 +93,7 @@ class ProductCategoriesPolicy
     /**
      * Determine whether the user can replicate.
      */
-    public function replicate(User $user, ProductCategories $productCategories): bool
+    public function replicate(User $user, ServiceData $serviceData): bool
     {
         return $user->can('{{ Replicate }}');
     }

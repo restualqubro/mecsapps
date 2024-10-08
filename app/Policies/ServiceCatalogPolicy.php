@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Policies\Products;
+namespace App\Policies;
 
 use App\Models\User;
-use App\Models\Products\ProductStocks;
+use App\Models\Services\ServiceCatalog;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class ProductStocksPolicy
+class ServiceCatalogPolicy
 {
     use HandlesAuthorization;
 
@@ -15,15 +15,15 @@ class ProductStocksPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view_any_product::stocks');
+        return $user->can('view_any_service::catalog');
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, ProductStocks $productStocks): bool
+    public function view(User $user, ServiceCatalog $serviceCatalog): bool
     {
-        return $user->can('view_product::stocks');
+        return $user->can('view_service::catalog');
     }
 
     /**
@@ -31,23 +31,23 @@ class ProductStocksPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create_product::stocks');
+        return $user->can('create_service::catalog');
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, ProductStocks $productStocks): bool
+    public function update(User $user, ServiceCatalog $serviceCatalog): bool
     {
-        return $user->can('update_product::stocks');
+        return $user->can('update_service::catalog');
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, ProductStocks $productStocks): bool
+    public function delete(User $user, ServiceCatalog $serviceCatalog): bool
     {
-        return $user->can('delete_product::stocks');
+        return $user->can('delete_service::catalog');
     }
 
     /**
@@ -55,13 +55,13 @@ class ProductStocksPolicy
      */
     public function deleteAny(User $user): bool
     {
-        return $user->can('delete_any_product::stocks');
+        return $user->can('delete_any_service::catalog');
     }
 
     /**
      * Determine whether the user can permanently delete.
      */
-    public function forceDelete(User $user, ProductStocks $productStocks): bool
+    public function forceDelete(User $user, ServiceCatalog $serviceCatalog): bool
     {
         return $user->can('{{ ForceDelete }}');
     }
@@ -77,7 +77,7 @@ class ProductStocksPolicy
     /**
      * Determine whether the user can restore.
      */
-    public function restore(User $user, ProductStocks $productStocks): bool
+    public function restore(User $user, ServiceCatalog $serviceCatalog): bool
     {
         return $user->can('{{ Restore }}');
     }
@@ -93,7 +93,7 @@ class ProductStocksPolicy
     /**
      * Determine whether the user can replicate.
      */
-    public function replicate(User $user, ProductStocks $productStocks): bool
+    public function replicate(User $user, ServiceCatalog $serviceCatalog): bool
     {
         return $user->can('{{ Replicate }}');
     }

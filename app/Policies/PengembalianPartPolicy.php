@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Policies\Products;
+namespace App\Policies;
 
 use App\Models\User;
-use App\Models\Products\ProductBrands;
+use App\Models\Products\PengembalianPart;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class ProductBrandsPolicy
+class PengembalianPartPolicy
 {
     use HandlesAuthorization;
 
@@ -15,15 +15,15 @@ class ProductBrandsPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view_any_product::brands');
+        return $user->can('view_any_pengembalian::part');
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, ProductBrands $productBrands): bool
+    public function view(User $user, PengembalianPart $pengembalianPart): bool
     {
-        return $user->can('view_product::brands');
+        return $user->can('view_pengembalian::part');
     }
 
     /**
@@ -31,23 +31,23 @@ class ProductBrandsPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create_product::brands');
+        return $user->can('create_pengembalian::part');
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, ProductBrands $productBrands): bool
+    public function update(User $user, PengembalianPart $pengembalianPart): bool
     {
-        return $user->can('update_product::brands');
+        return $user->can('update_pengembalian::part');
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, ProductBrands $productBrands): bool
+    public function delete(User $user, PengembalianPart $pengembalianPart): bool
     {
-        return $user->can('delete_product::brands');
+        return $user->can('delete_pengembalian::part');
     }
 
     /**
@@ -55,13 +55,13 @@ class ProductBrandsPolicy
      */
     public function deleteAny(User $user): bool
     {
-        return $user->can('delete_any_product::brands');
+        return $user->can('delete_any_pengembalian::part');
     }
 
     /**
      * Determine whether the user can permanently delete.
      */
-    public function forceDelete(User $user, ProductBrands $productBrands): bool
+    public function forceDelete(User $user, PengembalianPart $pengembalianPart): bool
     {
         return $user->can('{{ ForceDelete }}');
     }
@@ -77,7 +77,7 @@ class ProductBrandsPolicy
     /**
      * Determine whether the user can restore.
      */
-    public function restore(User $user, ProductBrands $productBrands): bool
+    public function restore(User $user, PengembalianPart $pengembalianPart): bool
     {
         return $user->can('{{ Restore }}');
     }
@@ -93,7 +93,7 @@ class ProductBrandsPolicy
     /**
      * Determine whether the user can replicate.
      */
-    public function replicate(User $user, ProductBrands $productBrands): bool
+    public function replicate(User $user, PengembalianPart $pengembalianPart): bool
     {
         return $user->can('{{ Replicate }}');
     }

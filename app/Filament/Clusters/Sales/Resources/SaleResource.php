@@ -295,7 +295,7 @@ class SaleResource extends Resource
                     Tables\Actions\Action::make('print')
                         ->hiddenLabel()
                         ->tooltip('Print')
-                        ->url(fn ($record) => '/print/fakturjual/'.$record->id)
+                        ->url(fn ($record) => 'print/fakturjual/'.$record->id)
                         ->color('primary')
                         ->icon('heroicon-o-printer')                    
                         ->openUrlInNewTab(), 

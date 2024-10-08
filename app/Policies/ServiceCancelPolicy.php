@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Policies\Connect;
+namespace App\Policies;
 
 use App\Models\User;
-use App\Models\Connect\Partners;
+use App\Models\Services\ServiceCancel;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class PartnersPolicy
+class ServiceCancelPolicy
 {
     use HandlesAuthorization;
 
@@ -15,15 +15,15 @@ class PartnersPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view_any_connect::partners');
+        return $user->can('view_any_services::service::cancel');
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Partners $partners): bool
+    public function view(User $user, ServiceCancel $serviceCancel): bool
     {
-        return $user->can('view_connect::partners');
+        return $user->can('view_services::service::cancel');
     }
 
     /**
@@ -31,23 +31,23 @@ class PartnersPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create_connect::partners');
+        return $user->can('create_services::service::cancel');
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Partners $partners): bool
+    public function update(User $user, ServiceCancel $serviceCancel): bool
     {
-        return $user->can('update_connect::partners');
+        return $user->can('update_services::service::cancel');
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Partners $partners): bool
+    public function delete(User $user, ServiceCancel $serviceCancel): bool
     {
-        return $user->can('delete_connect::partners');
+        return $user->can('delete_services::service::cancel');
     }
 
     /**
@@ -55,13 +55,13 @@ class PartnersPolicy
      */
     public function deleteAny(User $user): bool
     {
-        return $user->can('delete_any_connect::partners');
+        return $user->can('delete_any_services::service::cancel');
     }
 
     /**
      * Determine whether the user can permanently delete.
      */
-    public function forceDelete(User $user, Partners $partners): bool
+    public function forceDelete(User $user, ServiceCancel $serviceCancel): bool
     {
         return $user->can('{{ ForceDelete }}');
     }
@@ -77,7 +77,7 @@ class PartnersPolicy
     /**
      * Determine whether the user can restore.
      */
-    public function restore(User $user, Partners $partners): bool
+    public function restore(User $user, ServiceCancel $serviceCancel): bool
     {
         return $user->can('{{ Restore }}');
     }
@@ -93,7 +93,7 @@ class PartnersPolicy
     /**
      * Determine whether the user can replicate.
      */
-    public function replicate(User $user, Partners $partners): bool
+    public function replicate(User $user, ServiceCancel $serviceCancel): bool
     {
         return $user->can('{{ Replicate }}');
     }
