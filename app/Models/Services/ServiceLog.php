@@ -27,6 +27,6 @@ class ServiceLog extends Model
 
     public function service(): BelongsTo
     {
-        return $this->belongsTo(ServiceData::class);
+        return $this->belongsTo(ServiceData::class, 'service_id', 'id');
     }
 }

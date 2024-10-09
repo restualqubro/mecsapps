@@ -346,7 +346,7 @@ class ServiceDataResource extends Resource
                         TextEntry::make('description')
                             ->label('Keterangan/Update'),
                 ])->columns(2),                                                             
-                RepeatableEntry::make('logservice')
+                RepeatableEntry::make('serviceLog')
                     ->label('History')
                     ->schema([
                         TextEntry::make('status')
@@ -371,7 +371,7 @@ class ServiceDataResource extends Resource
                     ->columnSpan(2)                                                                        
                                     
             ])->columns(2);
-    }
+    }    
 
     public static function getPages(): array
     {

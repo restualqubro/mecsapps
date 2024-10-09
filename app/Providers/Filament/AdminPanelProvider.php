@@ -65,7 +65,7 @@ class AdminPanelProvider extends PanelProvider
 
             ])
             ->pages([
-                Pages\Dashboard::class,
+                // Pages\Dashboard::class,
             ])
             ->routes(function () {
                 //  add to /portal/*
