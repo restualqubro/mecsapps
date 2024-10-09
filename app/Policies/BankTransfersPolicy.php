@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Policies\Finance;
+namespace App\Policies;
 
 use App\Models\User;
 use App\Models\Finance\BankTransfers;

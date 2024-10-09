@@ -58,6 +58,8 @@ class AdminPanelProvider extends PanelProvider
                      ->label('Stocks'),                
                 NavigationGroup::make()
                      ->label('Connects'),
+                    NavigationGroup::make()
+                     ->label('Retur'),
                 NavigationGroup::make()
                     ->label('Access'),                    
                 NavigationGroup::make()                    

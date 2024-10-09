@@ -244,7 +244,7 @@ class InvoiceResource extends Resource
             ->schema([     
                 Section::make('Service Details')
                     ->schema([
-                        TextEntry::make('code')
+                        TextEntry::make('selesai.service.code')
                             ->label('Kode Service')
                             ->weight(FontWeight::Bold),                        
                         TextEntry::make('selesai.service.customer.name')
