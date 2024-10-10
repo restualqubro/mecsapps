@@ -5,7 +5,7 @@ namespace App\Filament\Widgets;
 use App\Models\Connect\Customers;
 use Filament\Widgets\ChartWidget;
 
-class CustomerWidgets extends ChartWidget
+class CustomerChart extends ChartWidget
 {
     protected static ?string $heading = 'Customer Chart Data';
 

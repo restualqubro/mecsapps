@@ -20,10 +20,10 @@ class DashboardStats extends BaseDashboard
     protected function getHeaderWidgets(): array
     {
         return [            
-            // Widgets\StatsCustomerUmumWidget::class,
-            // Widgets\StatsServiceDataWidget::class,
-            Widgets\CustomerWidgets::class,
-            // Widgets\ServiceDataChart::class,
+            Widgets\CustomerStats::class,
+            Widgets\ServiceDataStats::class,
+            Widgets\CustomerChart::class,
+            Widgets\ServiceDataChart::class,
             // Widgets\PiutangServiceTableWidget::class,
             // Widgets\PiutangJualTableWidget::class,
             
