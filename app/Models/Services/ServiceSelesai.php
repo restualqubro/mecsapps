@@ -55,6 +55,6 @@ class ServiceSelesai extends Model
     
     public function invoice(): HasOne
     {
-        return $this->hasOne(Invoices::class);
+        return $this->hasOne(Invoices::class, 'selesai_id', 'id');
     }
 }

@@ -193,7 +193,7 @@ class ServiceTopartnerResource extends Resource
                             ServiceTopartner::where('id', $row->id)->update([
                                 'update'   => 'inPartner : '.$data['description'],
                                 'status_pembayaran' => $data['status_pembayaran'],
-                                'status'   => 'Diambil'              
+                                'status'   => 'Kembali'              
 
                             ]);
                         })

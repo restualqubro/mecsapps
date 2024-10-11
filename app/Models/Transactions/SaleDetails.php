@@ -35,4 +35,10 @@ class SaleDetails extends Model
     {
         return ($this->qty * ($this->hjual - $this->disc));
     }
+
+    public function getSumAttribute()
+    {
+        $getHbeli = ProductStocks::find($this->stock_id);
+        return ($this->qty * ($this->hjual - $getHbeli->hbeli));
+    }
 }

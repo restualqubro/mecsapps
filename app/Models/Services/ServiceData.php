@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class ServiceData extends Model
 {
@@ -44,5 +45,10 @@ class ServiceData extends Model
     public function serviceLog(): HasMany
     {
         return $this->hasMany(ServiceLog::class, 'service_id', 'id');
+    }
+
+    public function selesai(): HasOne
+    {
+        return $this->hasOne(ServiceSelesai::class, 'service_id', 'id');
     }
 }

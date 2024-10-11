@@ -24,4 +24,12 @@ class StockoutDetails extends Model
     public function stockout(){
         return $this->belongsTo(Stockouts::class, 'stockout_id', 'id');
     }
+
+    public function getSumAttribute()
+    {
+        $data = ProductStocks::find($this->stock_id);
+        $multiple = $this->qty * $data->hbeli;
+
+        return $multiple;
+    }
 }
