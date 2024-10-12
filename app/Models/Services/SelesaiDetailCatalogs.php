@@ -28,4 +28,9 @@ class SelesaiDetailCatalogs extends Model
     {
         return $this->belongsTo(ServiceCatalog::class, 'servicecatalog_id', 'id');
     }
+
+    public function getSumAttribute()
+    {
+        $omzet = $this->catalog_qty * ($this->biaya * $this->catalog_disc);
+    }
 }

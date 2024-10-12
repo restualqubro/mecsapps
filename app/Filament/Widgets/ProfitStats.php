@@ -8,6 +8,8 @@ use App\Filament\Widgets\BalanceStats;
 use App\Models\Services\SelesaiDetailComponents;
 use App\Models\Services\ServiceTopartner;
 use App\Models\Transactions\SaleDetails;
+use App\Filament\Widgets\PurchaseStats;
+use App\Filament\Widgets\CashoutStats;
 use Illuminate\Support\Facades\DB;
 
 class ProfitStats extends BaseWidget
@@ -15,7 +17,9 @@ class ProfitStats extends BaseWidget
     protected function getStats(): array
     {
         $getInvoiceProfit = BalanceStats::getOmzetInvoices() - self::getComponentSum() - self::getTopartnerSum();
-        $getProfitTotals = $getInvoiceProfit + self::getSalesProfit() - (BalanceStats::getPenarikanCash() + BalanceStats::getPenarikanRekening());
+        $getProfitTotals = $getInvoiceProfit + self::getSalesProfit() - (BalanceStats::getPenarikanCash() 
+                            + BalanceStats::getPenarikanRekening() - PurchaseStats::getCompensation() - PurchaseStats::getKerugian()
+                            - CashoutStats::getAllCashouts());
         return [
             Stat::make('Profit Service', number_format($getInvoiceProfit , 0, '', '.')),
             Stat::make('Profit Penjualan',  number_format(self::getSalesProfit(), 0, '', '.')),

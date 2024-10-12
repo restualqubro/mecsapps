@@ -8,6 +8,10 @@ use App\Models\Services\SelesaiDetailCatalogs;
 use App\Models\Transactions\SaleDetails;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use App\Filament\Widgets\PelunasanStats;
+use App\Filament\Widgets\CashoutStats;
+use App\Filament\Widgets\PurchaseStats;
+use App\Models\Finance\Pemasukan;
 use Illuminate\Support\Facades\DB;
 
 class BalanceStats extends BaseWidget
@@ -15,7 +19,9 @@ class BalanceStats extends BaseWidget
     protected function getStats(): array
     {       
         $getPenarikan = self::getPenarikanCash() - self::getPenarikanRekening(); 
-        $getSaldoCash = self::getOmzetSales() + self::getOmzetInvoices() - self::getTransferOut() - self::getPenarikanCash();
+        $getSaldoCash = self::getOmzetSales() + self::getOmzetInvoices() + PelunasanStats::getSalesPiutang() + PelunasanStats::getInvoicesPiutang()
+                        + self::getPemasukan() - self::getPenarikanCash() - CashoutStats::getAllCashouts() - PelunasanStats::getPurchasesUtang()
+                        - PurchaseStats::getPurchase() - PurchaseStats::getKerugian() - PurchaseStats::getCompensation();
         $getSaldoMandiri = self::getTransferIn() - self::getTransferOut() - self::getPenarikanRekening();
         return [
             Stat::make('Saldo Cash', number_format(($getSaldoCash), 0, '', '.')),
@@ -71,6 +77,13 @@ class BalanceStats extends BaseWidget
     {
         $data = Penarikan::where('sumber', 'Rekening')
                 ->where('status', '=', 'Approve')->sum('nominal');
+
+        return $data;
+    }
+
+    public static function getPemasukan(): int
+    {
+        $data = Pemasukan::get()->sum('nominal');
 
         return $data;
     }

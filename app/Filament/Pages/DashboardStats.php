@@ -24,8 +24,8 @@ class DashboardStats extends BaseDashboard
             Widgets\ServiceDataStats::class,
             Widgets\CustomerChart::class,
             Widgets\ServiceDataChart::class,
-            // Widgets\PiutangServiceTableWidget::class,
-            // Widgets\PiutangJualTableWidget::class,
+            Widgets\PiutangInvoicesTable::class,
+            Widgets\PiutangSalesTable::class,
             
         ];
     }

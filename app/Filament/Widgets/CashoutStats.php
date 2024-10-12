@@ -92,4 +92,13 @@ class CashoutStats extends BaseWidget
                     - self::getCashoutMitra() - self::getCashoutOngkir();
         return $sum;
     }  
+
+    public static function getAllCashouts(): int
+    {
+        $data = Pengeluaran::where('status', '=', 'Approve')
+                ->get()
+                ->sum('nominal');
+
+        return $data;
+    }
 }

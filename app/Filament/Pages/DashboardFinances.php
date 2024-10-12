@@ -17,10 +17,14 @@ class DashboardFinances extends Page
     {
         return [
             Widgets\BalanceStats::class,
+            Widgets\OmzetChart::class,
+            Widgets\ProfitChart::class,
+            Widgets\OmzetStats::class,
             Widgets\ProfitStats::class,
+            Widgets\PelunasanStats::class,
             Widgets\PurchaseStats::class,
             Widgets\UtangPiutangStats::class,
-            Widgets\CashoutStats::class,                                    
+            Widgets\CashoutStats::class,                                                
             // Widgets\ProfitChart::class,                        
         ];
     }
