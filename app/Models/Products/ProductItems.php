@@ -60,20 +60,27 @@ class ProductItems extends Model implements HasMedia
 
     public function getSumpinjamAttribute()
     {           
-        $getStockId = ProductStocks::where('item_id', $this->id)->pluck('id');
-        $getPeminjaman = PeminjamanPart::where('stock_id', $getStockId)
-                                        ->where('status', 'Approve')->sum('qty');
-        return $getPeminjaman;
+        //$getStockId = ProductStocks::where('item_id', $this->id)->first()->pluck('id');
+        //$getPeminjaman = PeminjamanPart::where('stock_id', '=', $getStockId)
+	//				->where('status', '=', 'Approve')->sum('qty');
+        //return $getPeminjaman;
+	//return dd($getStock);
+
+	//$getStockId = ProductStocks::where('item_id', $this->id)->first()->pluck('id');
+        //$getPeminjaman = PeminjamanPart::where('status', 'Approve')
+	//				->where('stock_id', $getStockId)
+          //                              ->sum('qty');
+        //return $getPeminjaman;
     }
     
     public function getSumAttribute()
     {
-        $sumPinjam = $this->getSumpinjamAttribute();
+        //$sumPinjam = $this->getSumpinjamAttribute();
         $sum = 0;
         $get = ProductStocks::select('stok')->where('item_id', $this->id)->get();                
         foreach($get as $stok)
         {
-            $sum = $sum + $stok->stok - $sumPinjam;
+            $sum = $sum + $stok->stok;
         }
         return $sum;
     }     

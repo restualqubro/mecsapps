@@ -14,6 +14,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
 use Filament\Infolists\Components\TextEntry;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 
 class PengeluaranResource extends Resource
 {
@@ -105,11 +106,17 @@ class PengeluaranResource extends Resource
                 ])
                 
             ])
+            ->defaultSort('created_at', 'DESC')
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->modifyQueryUsing(function (Builder $query) { 
+                if (auth()->user()->role !== 'super_admin') { 
+                    return $query->where('category_id', '!=', 'DLL'); 
+                } 
+            }) ;
     }
     
     public static function infolist(Infolist $infolist): Infolist
@@ -146,9 +153,7 @@ class PengeluaranResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPengeluarans::route('/'),
-            // 'create' => Pages\CreatePengeluaran::route('/create'),
-            // 'edit' => Pages\EditPengeluaran::route('/{record}/edit'),
+            'index' => Pages\ListPengeluarans::route('/'),            
         ];
     }
 }

@@ -235,7 +235,8 @@ class InvoiceResource extends Resource
                         $q->where('teknisi_id', auth()->id());
                     });                  
                 }                                
-            });
+            })
+	      ->defaultSort('created_at', 'DESC');
     }    
 
     public static function infolist(Infolist $infolist): Infolist

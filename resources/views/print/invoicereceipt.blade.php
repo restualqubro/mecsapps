@@ -133,6 +133,7 @@
                 Kode Service<br/>
                 Unit<br/>
                 Kelengkapan<br/>
+		Referensi<br/>
               </div>
               <div class="col-0">
                 :<br/>
@@ -141,6 +142,7 @@
                 :<br/>
                 :<br/>
                 :<br/>
+		:<br/>
               </div>
               <div class="col-6">              
                 {{date('d M Y', strtotime($items->created_at))}}<br/>
@@ -149,6 +151,7 @@
                 {{$items->selesai->service->code}}<br/>
                 {{$items->selesai->service->merk}} {{$items->selesai->service->seri}}<br/>
                 {{$items->selesai->service->kelengkapan}}<br/>                  
+		{{$items->selesai->service->reference}}<br/>
               </div>              
             </div>
             <br/>
@@ -194,17 +197,17 @@
           @endphp
           @foreach($datas as $item)            
           @php
-            $subtotal += $item->biaya * $item->service_qty;
-            $totaldiscount += $item->service_qty * $item->service_disc;
-            $total += $item->service_qty * ($item->biaya - $item->service_disc);
+            $subtotal += $item->biaya * $item->catalog_qty;
+            $totaldiscount += $item->catalog_qty * $item->catalog_disc;
+            $total += $item->catalog_qty * ($item->biaya - $item->catalog_disc);
           @endphp
           <tr>              
             <td>{{$loop->iteration}}</td>
             <td>{{$item->catalog->name}}</td>
             <td>{{number_format($item->biaya, 0, '', '.')}}</td>
-            <td>{{$item->service_qty}}</td>
-            <td>{{number_format($item->service_disc, 0, '', '.')}}</td>
-            <td>{{number_format($item->service_qty * ($item->biaya - $item->service_disc), 0, '', '.')}}</td>
+            <td>{{$item->catalog_qty}}</td>
+            <td>{{number_format($item->catalog_disc, 0, '', '.')}}</td>
+            <td>{{number_format($item->catalog_qty * ($item->biaya - $item->catalog_disc), 0, '', '.')}}</td>
             <td>{{$item->catalog->warranty}} Hari / Days</td>
           </tr> 
           @endforeach          

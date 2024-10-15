@@ -51,20 +51,22 @@ class SuppliersResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\Action::make('contact')
-                    ->hiddenLabel()
-                    ->tooltip('Contact')
-                    ->url(function($record) {
-                        
-                        // return dd($record);
-                        return 'https://wa.me/+62'.$record->telp;
-                    })
-                    ->color('success')
-                    ->icon('heroicon-o-chat-bubble-bottom-center-text')
-                    ->openUrlInNewTab(),
-                Tables\Actions\ViewAction::make()->hiddenLabel()->tooltip('Detail'),
-                Tables\Actions\EditAction::make()->hiddenLabel()->tooltip('Edit'),
-                Tables\Actions\DeleteAction::make()->hiddenLabel()->tooltip('Delete'),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\Action::make('contact')
+                        ->hiddenLabel()
+                        ->tooltip('Contact')
+                        ->url(function($record) {
+                            
+                            // return dd($record);
+                            return 'https://wa.me/+62'.$record->telp;
+                        })
+                        ->color('success')
+                        ->icon('heroicon-o-chat-bubble-bottom-center-text')
+                        ->openUrlInNewTab(),
+                    Tables\Actions\ViewAction::make()->hiddenLabel()->tooltip('Detail'),
+                    Tables\Actions\EditAction::make()->hiddenLabel()->tooltip('Edit'),
+                    Tables\Actions\DeleteAction::make()->hiddenLabel()->tooltip('Delete'),
+                ])                
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

@@ -86,6 +86,7 @@ class CashoutStats extends BaseWidget
     public static function getCashoutLainnya(): int
     {
         $data = Pengeluaran::where('status', '=', 'Approve')
+                            ->where('category_id', '!=', '7')
         ->get()
         ->sum('nominal');
         $sum = $data - self::getCashoutKonsumsi() - self::getCashoutInfaq() - self::getCashoutListrik() 

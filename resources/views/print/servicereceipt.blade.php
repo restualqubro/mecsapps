@@ -90,16 +90,19 @@
                         Tanggal<br/>
                         Customer<br/>
                         Contact<br/>
+			Referensi<br/>
                         </div>
                         <div class="col-0">
                         :<br/>
                         :<br/>
                         :<br/>
+			:<br/>
                         </div>
                         <div class="col-8">              
                         {{date('d M Y', strtotime($items->created_at))}}<br/>
                         {{$items->customer->name}}<br/>
                         {{$items->customer->telp}}<br/>              
+			{{$items->reference}}<br/>
                         </div>
                     </div>
                     <br/>

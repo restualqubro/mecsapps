@@ -267,7 +267,8 @@ class SaleResource extends Resource
                     ->default(now())
                     ->date(),                
                 Tables\Columns\TextColumn::make('customer.name')        
-                    ->label('Supplier'),
+                    ->label('Customer')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('total')                    
                     ->label('Total Harga')
                     ->money('IDR'),
@@ -295,7 +296,7 @@ class SaleResource extends Resource
                     Tables\Actions\Action::make('print')
                         ->hiddenLabel()
                         ->tooltip('Print')
-                        ->url(fn ($record) => 'print/fakturjual/'.$record->id)
+                        ->url(fn ($record) => '/print/fakturjual/'.$record->id)
                         ->color('primary')
                         ->icon('heroicon-o-printer')                    
                         ->openUrlInNewTab(), 
@@ -353,7 +354,8 @@ class SaleResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+	    ->defaultSort('created_at', 'DESC');
     }
 
     public static function infolist(Infolist $infolist): Infolist

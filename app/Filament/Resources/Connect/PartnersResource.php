@@ -55,7 +55,8 @@ class PartnersResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\Action::make('contact')
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\Action::make('contact')
                     ->hiddenLabel()
                     ->tooltip('Contact')
                     ->url(function($record) {
@@ -69,6 +70,7 @@ class PartnersResource extends Resource
                 Tables\Actions\ViewAction::make()->hiddenLabel()->tooltip('Detail'),
                 Tables\Actions\EditAction::make()->hiddenLabel()->tooltip('Edit'),
                 Tables\Actions\DeleteAction::make()->hiddenLabel()->tooltip('Delete'),
+                ])                
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

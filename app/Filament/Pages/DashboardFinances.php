@@ -4,9 +4,12 @@ namespace App\Filament\Pages;
 
 use Filament\Pages\Page;
 use App\Filament\Widgets;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 
 class DashboardFinances extends Page
 {
+    use HasPageShield;
+    
     protected static ?string $navigationIcon = 'heroicon-o-wallet';
 
     protected static ?string $navigationLabel = 'Dashboard Finance';

@@ -19,7 +19,7 @@ class PiutangSalesTable extends BaseWidget
     public function table(Table $table): Table
     {
         return $table
-            ->heading('Piutang PenSalesan')
+            ->heading('Piutang Penjualan')
             ->query(Sale::query()->where('status', 'Piutang'))            
             ->columns([
                 Tables\Columns\TextColumn::make('code')
@@ -28,7 +28,7 @@ class PiutangSalesTable extends BaseWidget
                     ->label('Customer'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Usia')
-                    ->formatStateUsing(fn($state) => \Carbon\Carbon::parse($state)->diffInDays(\Carbon\Carbon::parse(now()))),                    
+                    ->formatStateUsing(fn($state) => number_format(\Carbon\Carbon::parse($state)->diffInDays(\Carbon\Carbon::parse(now())), 0). ' Hari'),                    
                 Tables\Columns\TextColumn::make('sisa')
                     ->numeric(decimalPlaces:0)
                     ->label('Sisa Pembayaran')

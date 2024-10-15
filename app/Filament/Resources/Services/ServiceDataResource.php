@@ -86,19 +86,14 @@ class ServiceDataResource extends Resource
                         'sm' => 2,
                         'xl' => 3,
                         '2xl' => 4,
-                    ]),          
-                Forms\Components\Select::make('penawaran')
-                    ->label('Penawaran')                    
-                    ->options([
-                        'Setuju' => 'Setuju',
-                        'Tidak'  => 'Tidak'
-                    ])
-                    ->columnSpan([
-                        'sm' => 2,
-                        'xl' => 3,
-                        '2xl' => 4,
-                    ])
-                    ->hidden(fn (string $operation): bool => $operation === 'create'),          
+                    ]),
+		Forms\Components\TextInput::make('reference')
+		    ->label('Nomor Referensi')
+		    ->columnSpan([
+			'sm' => 2,
+			'xl' => 3,
+			'2xl' => 4,
+		    ]),                                 
                 Forms\Components\TextInput::make('sn')          
                     ->label('Serial Number')
                     ->columnSpan([

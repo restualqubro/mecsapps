@@ -18,7 +18,8 @@ class Penarikan extends Model
         'nominal',
         'status',
         'submitted_id',
-        'approval_id'
+        'approval_id', 
+        'description'
     ];
 
     public function submitted(): BelongsTo

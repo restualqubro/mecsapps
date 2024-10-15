@@ -75,7 +75,7 @@ class AdminPanelProvider extends PanelProvider
                     return redirect()->away('wa.me');
                 });     
                 Route::get('/print/servicereceipt/{id}', [ServiceReceipt::class, 'print']);
-                Route::get('/print/selesaireceipt/{id}', [SelesaiReceipt::class, 'print']);
+                Route::get('/print/selesaireceipt', [SelesaiReceipt::class, 'print']);
                 Route::get('/print/invoicereceipt/{id}', [InvoiceReceipt::class, 'print']);
                 Route::get('/print/fakturjual/{id}', [FakturJual::class, 'print']);
                 Route::get('/print/fakturpreorder/{id}', [FakturPreorder::class, 'print']);

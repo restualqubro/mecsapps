@@ -28,7 +28,7 @@ class CompensationCategoriesResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('name')
                     ->label('Nama Kategori')
-                    ->requried()
+                    ->required()
             ]);
     }
 

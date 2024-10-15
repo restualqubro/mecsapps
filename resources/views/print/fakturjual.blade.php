@@ -190,7 +190,7 @@
           @endphp
           <tr>              
             <td>{{$loop->iteration}}</td>
-            <td>{{$item->stock->product->name}}</td>
+            <td>{{$item->productStocks->item->name}}</td>
             <td>{{number_format($item->hjual, 0, '', '.')}}</td>
             <td>{{$item->qty}}</td>
             <td>{{number_format($item->disc, 0, '', '.')}}</td>

@@ -53,26 +53,7 @@ class ProductItemsResource extends Resource
                     ])->columns('3')
                     ->footerActions([
                         Forms\Components\Actions\Action::make('Generate')
-                        ->action(function (Forms\Get $get, Forms\Set $set) {
-					$category = ProductCategories::find($get('category_id'));                            
-        				$brand = ProductBrands::find($get('brand_id'));                                                        
-        
-				        if ($category === null || $brand === null) {
-				            $set('code', "Generate Gagal!!");
-				        } 
-				        else {  
-				            $last = ProductItems::where([
-				            	['category_id', '=', $category->id],
-                				['brand_id', '=', $brand->id]
-				            ])->max('code');
-	 			           if ($last != null) {                                    
-				                $tmp = substr($last, 7, 3)+1;
-					             $set('code', $category->init."-".$brand->init.sprintf("%03s", $tmp));
-				            } else {
-				                $set('code', $category->init."-".$brand->init."001");
-				            }                
-				        }
-				})
+                        ->action(fn (Forms\Get $get, Forms\Set $set) => self::generateCode() )
                         ->hidden(fn(string $operation): bool => $operation === 'view') 
                         
                     ])->hidden(fn(string $operation):bool => $operation === 'edit'),                      
@@ -158,8 +139,7 @@ class ProductItemsResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ])
-	    ->defaultSort('created_at', 'DESC');
+            ]);
     }
     
     public static function infolist(Infolist $infolist): Infolist
@@ -173,8 +153,8 @@ class ProductItemsResource extends Resource
                     ->label('Name'),
                 TextEntry::make('sum')                   
                     ->label('Stok'),
-                //TextEntry::make('sumpinjam')
-                //    ->label('Peminjaman Item'),                                 
+                TextEntry::make('sumpinjam')
+                    ->label('Peminjaman Item'),                                 
                 TextEntry::make('category.name')
                     ->label('Categories'),
                 TextEntry::make('brand.name')
@@ -196,7 +176,30 @@ class ProductItemsResource extends Resource
                 'lg'    => 2,
                 'xl'    => 2
             ]);
-    }   
+    }
+
+    public static function generateCode(Forms\Get $get, Forms\Set $set): void
+    {
+        $category = ProductCategories::find($get('category_id'));                            
+        $brand = ProductBrands::find($get('brand_id'));                                                        
+        
+        if ($category === null || $brand === null) {
+            $set('code', "Generate Gagal!!");
+        } 
+        else {  
+            $last = ProductItems::where([
+                ['category_id', '=', $category->id],
+                ['brand_id', '=', $brand->id]
+            ])->max('code');
+            if ($last != null) {                                    
+                $tmp = substr($last, 7, 3)+1;
+                $set('code', $category->init."-".$brand->init.sprintf("%03s", $tmp));
+            } else {
+                $set('code', $category->init."-".$brand->init."001");
+            }                
+        }
+    }
+    
 
     public static function getPages(): array
     {

@@ -3,21 +3,21 @@
 namespace App\Filament\Widgets;
 
 use App\Models\Services\SelesaiDetailCatalogs;
+use App\Models\Services\SelesaiDetailComponents;
+use App\Models\Services\ServiceSelesai;
+use App\Models\Services\ServiceTopartner;
 use App\Models\Transactions\SaleDetails;
 use Filament\Widgets\ChartWidget;
 use Flowframe\Trend\Trend;
 use Flowframe\Trend\TrendValue;
+use Illuminate\Support\Facades\DB;
 
 class ProfitChart extends ChartWidget
 {
     protected static ?string $heading = 'Profit Chart';
 
     protected function getData(): array
-    {
-
-        // Country::join('state', 'state.country_id', '=', 'country.country_id')
-        // ->join('city', 'city.state_id', '=', 'state.state_id')
-        // ->get(['country.country_name', 'state.state_name', 'city.city_name'])
+    {        
         $dataSales = Trend::
                     query(SaleDetails::join('sales', 'sale_details.sale_id', '=', 'sales.id')
                                         ->join('product_stocks', 'sale_details.stock_id', '=', 'product_stocks.id')
@@ -29,30 +29,28 @@ class ProfitChart extends ChartWidget
                     )
                     ->perMonth()
                     ->sum('qty * (hjual - hbeli)');
-            $dataInvoices = Trend::
-                    query(SelesaiDetailCatalogs::join('service_selesais', 'selesai_detail_catalogs.selesai_id', '=', 'service_selesais.id'))                                        
-                                        // ->where('invoices.status', '!=', 'Piutang'))                        
+        $dataInvoices = Trend::                                         
+                    query(
+                        SelesaiDetailCatalogs::whereHas('selesai', function ($q)
+                        {
+                            $q->whereHas('invoice',function($q) {
+                                $q->where('status', '!=', 'Piutang');
+                            });
+                            $q->whereHas('service', function($q) {            
+                                $q->with('service_topartners');
+                            });        
+                        })                            
+                        
+                    )
                     ->dateColumn('selesai_detail_catalogs.created_at')
                     ->between(
                         start: now()->startOfYear(),
                         end: now()->endOfYear(),
                     )
                     ->perMonth()
-                    ->sum('catalog_qty * (selesai_detail_catalogs.biaya)');
+                    ->sum('catalog_qty * (biaya - catalog_disc)');     
                     
-        // $dataInvoices = Trend::
-        //             query(SelesaiDetailCatalogs::whereHas('selesai', function($q) {
-        //                 $q->whereHas('invoice', function($q) {
-        //                     $q->where('status', '!=', 'Piutang');
-        //                 });
-        //             }))
-        //             ->between(
-        //                 start: now()->startOfYear(),
-        //                 end: now()->endOfYear(),
-        //             )
-        //             ->perMonth()
-        //             ->sum('catalog_qty * (biaya - catalog_disc)');
-
+        $data = self::operate();
         return [
             'datasets' => [                
                 [
@@ -62,7 +60,8 @@ class ProfitChart extends ChartWidget
                 ], 
                 [
                     'label' => 'Profit Service',
-                    'data' =>   $dataInvoices->map(fn (TrendValue $value) => $value->aggregate),                                
+                    // 'data' =>   $data->map(fn (TrendValue $value) => $value->aggregate),                                
+                    'data' => $data['data'],
                     'borderColor' => 'rgb(248, 113, 113)',
                 ],                
             ],
@@ -74,5 +73,97 @@ class ProfitChart extends ChartWidget
     protected function getType(): string
     {
         return 'bar';
+    }
+
+    public function getOmzetSum()
+    {
+        $data = Trend::                                         
+                query(
+                    SelesaiDetailCatalogs::whereHas('selesai', function ($q)
+                    {
+                        $q->whereHas('invoice',function($q) {
+                            $q->where('status', '!=', 'Piutang');
+                        });
+                        $q->whereHas('service', function($q) {            
+                            $q->with('service_topartners');
+                        });        
+                    })                            
+                    
+                )
+                ->dateColumn('selesai_detail_catalogs.created_at')
+                ->between(
+                    start: now()->startOfYear(),
+                    end: now()->endOfYear(),
+                )
+                ->perMonth()
+                ->sum('catalog_qty * (biaya - catalog_disc)');
+                
+                return $data->map(fn(TrendValue $value) =>
+                $value->aggregate);
+    }
+
+    public function getComponentSum()
+    {
+        $data = Trend::                                         
+        query(
+           SelesaiDetailComponents::whereHas('selesai', function ($q)
+            {
+                $q->whereHas('invoice',function($q) {
+                    $q->where('status', '!=', 'Piutang');
+                });                
+            })                            
+            
+        )
+        ->dateColumn('selesai_detail_components.created_at')
+        ->between(
+            start: now()->startOfYear(),
+            end: now()->endOfYear(),
+        )
+        ->perMonth()
+        ->sum('component_qty * hbeli');
+
+        return $data->map(fn(TrendValue $value) =>
+            $value->aggregate);
+    }
+
+    public function getTopartnerSum()
+    {
+        $data = Trend::                                         
+        query(
+            ServiceTopartner::whereHas('service', function($q) {
+                $q->whereHas('selesai', function ($q) {
+                    $q->whereHas('invoice', function($q) {
+                        $q->where('status', '!=', 'Piutang');
+                    });
+                });
+            })
+        )
+        ->dateColumn('service_topartners.created_at')
+        ->between(
+            start: now()->startOfYear(),
+            end: now()->endOfYear(),
+        )
+        ->perMonth()
+        ->sum('biaya');
+
+        return $data->map(fn(TrendValue $value) =>
+            $value->aggregate);
+    }
+
+    public function operate()
+    {
+        $getOmzet = self::getOmzetSum();
+        $getComponent = self::getComponentSum();
+        $getTopartner = self::getTopartnerSum();
+
+        $size = count(collect($getOmzet));
+        $data = [];
+        for($i = 0; $i < $size; $i++)
+        {
+            $data[] = $getOmzet[$i] - $getComponent[$i] - $getTopartner[$i];
+        }
+        return [
+            'data' => $data
+        ];
     }
 }

@@ -8,11 +8,13 @@ use App\Filament\Clusters\Finance\Resources\PenarikanResource\RelationManagers;
 use App\Models\Finance\Penarikan;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\Section;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Infolists\Infolist;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Support\Enums\FontWeight;
 
 class PenarikanResource extends Resource
 {
@@ -40,6 +42,7 @@ class PenarikanResource extends Resource
                 Forms\Components\TextInput::make('nominal')
                     ->label('Nominal Pengambilan')
                     ->required(),
+                Forms\Components\Textarea::make('description'),
                 Forms\Components\Hidden::make('submitted_id')                    
                     ->default(fn() => auth()->id()),
                 Forms\Components\Hidden::make('status')                    
@@ -63,14 +66,15 @@ class PenarikanResource extends Resource
                         'danger'    => 'Reject',
                         'gray'      => 'Baru'
                     ]),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->label('Last Updated')
+                Tables\Columns\TextColumn::make('description')
+                    ->limit(50)
             ])
             ->filters([
                 
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([
+                    Tables\Actions\ViewAction::make(),
                     Tables\Actions\Action::make('approve')
                         ->label('Approve')
                         ->icon('heroicon-o-check')
@@ -88,6 +92,24 @@ class PenarikanResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
+            ]);
+    }
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([     
+                Section::make('Sale Details')
+                    ->schema([
+                        TextEntry::make('sumber')
+                            ->label('Sumber')
+                            ->weight(FontWeight::Bold), 
+                        TextEntry::make('created_at')
+                            ->label('Created at'), 
+                        TextEntry::make('nominal')
+                            ->label('Nominal'),                                                 
+                        TextEntry::make('description')                                                    
+                ])->columns(2),                                                                             
             ]);
     }
 

@@ -31,6 +31,13 @@ class EditInvoice extends EditRecord
         return $data;
     }
 
+    public function mutateFormDataBeforeSave(array $data): array
+    {
+	$data['sisa'] = (int)str_replace('.', '',  $data['sisa']);
+
+	return $data;
+    }
+
     protected function getRedirectUrl(): string
     {
         return static::getResource()::getUrl('index');

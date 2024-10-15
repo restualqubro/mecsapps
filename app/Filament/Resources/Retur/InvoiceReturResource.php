@@ -76,7 +76,7 @@ class InvoiceReturResource extends Resource
                                             $invoiceid = $get('../../invoice_id');                                                
                                             if ($invoiceid)
                                             {                 
-                                                $selesai = Invoices::find($invoiceid)->first();
+                                                $selesai = Invoices::find($invoiceid);
                                                 $items = SelesaiDetailCatalogs::where('selesai_id', $selesai->selesai_id)
                                                             ->get()
                                                             ->pluck('catalog.name', 'id');
@@ -97,7 +97,7 @@ class InvoiceReturResource extends Resource
                                             if ($invoiceid)
                                             {                                                              
                                                 // $selesai = Invoices::find($invoiceid)->first();
-                                                $details = SelesaiDetailCatalogs::find($state)->first();                                                                                                
+                                                $details = SelesaiDetailCatalogs::find($state);                                                                                                
                                                 if ($details) {                                                               
                                                     $set('biaya', $details->biaya);                                                
                                                     $set('disc', $details->catalog_disc);                                                                                                   
@@ -135,7 +135,7 @@ class InvoiceReturResource extends Resource
                                                 $invoiceid = $get('../../invoice_id');                                                
                                                 if ($invoiceid)
                                                 {                                                 
-                                                $items = $item->find($get('selesaidetailcatalog_id'))->first();                                                                                                                                        
+                                                $items = $item->find($get('selesaidetailcatalog_id')) ;                                                                                                                                        
                                                 if ($items) {
                                                     $max = $items->catalog_qty;
                                                     return $max;
@@ -167,7 +167,7 @@ class InvoiceReturResource extends Resource
                                 // After deleting a row, we need to update the totals
                                 ->deleteAction(
                                     fn(Forms\Components\Actions\Action $action) => $action->after(fn(Forms\Get $get, Forms\Set $set) => self::updateTotalHarga($get, $set)),
-                                )
+                                )                                
                                 ->defaultItems(1)
                                 ->columns([
                                     'md' => 10
@@ -175,9 +175,17 @@ class InvoiceReturResource extends Resource
                                 ->columnSpan('full')
                         ]),
                     Forms\Components\Card::make()                                                                                              
-                        ->schema([                                                                                                                 
+                        ->schema([        
+                            Forms\Components\TextInput::make('subtotal')
+                                ->label('Subtotal')
+                                ->disabled()
+                                ->dehydrated(),
+                            Forms\Components\TextInput::make('totaldiscount')
+                                ->label('Total Biaya Retur')                                
+                                ->disabled()
+                                ->dehydrated(),                                                                                                         
                             Forms\Components\TextInput::make('totalbiaya')
-                                ->label('Total Harga Retur')                                
+                                ->label('Total Biaya Retur')                                
                                 ->disabled()
                                 ->dehydrated(),                            
                             ])->columns(3),

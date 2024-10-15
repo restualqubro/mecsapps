@@ -11,6 +11,7 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 use App\Filament\Widgets\PelunasanStats;
 use App\Filament\Widgets\CashoutStats;
 use App\Filament\Widgets\PurchaseStats;
+use App\Filament\Widgets\ProfitStats;
 use App\Models\Finance\Pemasukan;
 use Illuminate\Support\Facades\DB;
 
@@ -18,11 +19,12 @@ class BalanceStats extends BaseWidget
 {
     protected function getStats(): array
     {       
-        $getPenarikan = self::getPenarikanCash() - self::getPenarikanRekening(); 
-        $getSaldoCash = self::getOmzetSales() + self::getOmzetInvoices() + PelunasanStats::getSalesPiutang() + PelunasanStats::getInvoicesPiutang()
-                        + self::getPemasukan() - self::getPenarikanCash() - CashoutStats::getAllCashouts() - PelunasanStats::getPurchasesUtang()
-                        - PurchaseStats::getPurchase() - PurchaseStats::getKerugian() - PurchaseStats::getCompensation();
+        $getPenarikan = self::getPenarikanCash() + self::getPenarikanRekening(); 
         $getSaldoMandiri = self::getTransferIn() - self::getTransferOut() - self::getPenarikanRekening();
+        $getSaldoCash = self::getOmzetSales() + self::getOmzetInvoices() + PelunasanStats::getSalesPiutang() + PelunasanStats::getInvoicesPiutang()
+                        + self::getPemasukan() - self::getPenarikanCash() - self::getPenarikanRekening() - CashoutStats::getAllCashouts() - PelunasanStats::getPurchasesUtang()
+                        - PurchaseStats::getPurchase() - PurchaseStats::getKerugian() - PurchaseStats::getCompensation()
+                        - $getSaldoMandiri - ProfitStats::getTopartnerSum();        
         return [
             Stat::make('Saldo Cash', number_format(($getSaldoCash), 0, '', '.')),
             Stat::make('Saldo Mandiri', number_format($getSaldoMandiri, 0, '', '.')),            

@@ -18,8 +18,8 @@ class ProfitStats extends BaseWidget
     {
         $getInvoiceProfit = BalanceStats::getOmzetInvoices() - self::getComponentSum() - self::getTopartnerSum();
         $getProfitTotals = $getInvoiceProfit + self::getSalesProfit() - (BalanceStats::getPenarikanCash() 
-                            + BalanceStats::getPenarikanRekening() - PurchaseStats::getCompensation() - PurchaseStats::getKerugian()
-                            - CashoutStats::getAllCashouts());
+                            + BalanceStats::getPenarikanRekening() + PurchaseStats::getCompensation() + PurchaseStats::getKerugian()
+                            + CashoutStats::getAllCashouts());
         return [
             Stat::make('Profit Service', number_format($getInvoiceProfit , 0, '', '.')),
             Stat::make('Profit Penjualan',  number_format(self::getSalesProfit(), 0, '', '.')),
@@ -27,7 +27,7 @@ class ProfitStats extends BaseWidget
         ];
     }
 
-    public function getComponentSum(): int
+    public static function getComponentSum(): int
     {
         $data = SelesaiDetailComponents::whereHas('selesai', function($q) {
             $q->whereHas('invoice', function($q) {
@@ -38,7 +38,7 @@ class ProfitStats extends BaseWidget
         return $data;
     }     
     
-    public function getTopartnerSum(): int
+    public static function getTopartnerSum(): int
     {
         $data = ServiceTopartner::whereHas('service', function($q) {
                     $q->whereHas('selesai', function ($q) {
@@ -53,7 +53,7 @@ class ProfitStats extends BaseWidget
         return $data;
     }
 
-    public function getSalesProfit(): int
+    public static function getSalesProfit(): int
     {
         $data = SaleDetails::whereHas('sale', function ($q) {
                 $q->where('is_pending', '=', 0);

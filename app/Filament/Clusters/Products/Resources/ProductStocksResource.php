@@ -38,7 +38,7 @@ class ProductStocksResource extends Resource
                         Forms\Components\Select::make('item_id')
                             ->label('Kode Items')
                             ->required()
-                            ->options(fn() => self::getProductItems())                            
+                            ->options(ProductItems::all()->pluck('code', 'id'))                            
                             ->searchable()
                             ->hiddenOn('edit'),                                                           
                         Forms\Components\TextInput::make('hbeli')
@@ -86,7 +86,8 @@ class ProductStocksResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+	    ->defaultSort('item.code', 'ASC');
     }
 
     public static function getProductItems(): Collection

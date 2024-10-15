@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Print;
 
 use App\Http\Controllers\Controller;
+use App\Models\Finance\BankAccounts;
 // use App\Models\Finance\BankAccount;
 use App\Models\Services\SelesaiDetailCatalogs;
 use App\Models\Transactions\Invoices;
@@ -21,8 +22,8 @@ class InvoiceReceipt extends Controller
             'items'     => $items,
             'datas'      => SelesaiDetailCatalogs::where('selesai_id', $items->selesai_id)->get(),
             'logo'      => Storage::url($settings->brand_logo),
-            // 'banks'     => BankAccount::all()            
-        //     // 'items'     => LayananCuti::where('surat_id', $id)->get(),
+            'banks'     => BankAccounts::all(),            
+            // 'items'     => LayananCuti::where('surat_id', $id)->get(),
             // 'image'     => base64_encode(QrCode::size(100)->generate(url('/validate/cuti/'.$id)))
 
         ];    	
