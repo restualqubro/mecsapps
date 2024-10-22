@@ -93,7 +93,7 @@ class ServiceDataResource extends Resource
 			'sm' => 2,
 			'xl' => 3,
 			'2xl' => 4,
-		    ]),                                 
+		    ]),     		               
                 Forms\Components\TextInput::make('sn')          
                     ->label('Serial Number')
                     ->columnSpan([

@@ -145,7 +145,7 @@ class PurchaseResource extends Resource
                                     })
                                     // After deleting a row, we need to update the totals
                                     ->deleteAction(
-                                        fn(Forms\Components\Actions\Action $action) => $action->after(fn(Forms\Get $get, Forms\Set $set) => self::updateTotals($get, $set)),
+                                        fn(Forms\Components\Actions\Action $action) => $action->after(fn(Forms\Get $get, Forms\Set $set) => self::updateTotalHarga($get, $set)),
                                     )
                                     ->mutateRelationshipDataBeforeFillUsing(function (array $data): array {
                                         $data['jumlah'] = number_format($data['qty'] * $data['hbeli'], 0, '', '.');

@@ -120,13 +120,13 @@ class PengembalianPartResource extends Resource
     public static function getCode(): string
     {
         $now = Carbon::now()->format('my');
-        $last = PeminjamanPart::whereRaw("MID(code, 5, 4) = $now")->max('code');        
+        $last = PengembalianPart::whereRaw("MID(code, 5, 4) = $now")->max('code');        
         if ($last) 
         {                                                                                            
             $tmp = substr($last, 8, 2)+1;
-            $code = "MPJ-".$now.sprintf("%02s", $tmp);                                                                            
+            $code = "MPB-".$now.sprintf("%02s", $tmp);                                                                            
         } else {
-            $code =  "MPJ-".$now."01";
+            $code =  "MPB-".$now."01";
         }        
         return $code;
     }

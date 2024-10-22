@@ -61,7 +61,8 @@ class BankTransferResource extends Resource
                         'danger'    => 'keluar'
                     ]),
                 Tables\Columns\TextColumn::make('nominal')
-                    ->numeric(decimalPlaces:0),                
+                    ->numeric(decimalPlaces:0),  
+		Tables\Columns\TextColumn::make('updated_at')              
             ])
             ->filters([
                 //
@@ -78,7 +79,8 @@ class BankTransferResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+	    ->defaultSort('created_at', 'DESC');
     }
 
     public static function getRelations(): array

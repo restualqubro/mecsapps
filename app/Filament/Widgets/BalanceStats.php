@@ -46,7 +46,7 @@ class BalanceStats extends BaseWidget
     {
         $data = SelesaiDetailCatalogs::whereHas('selesai', function($q) {
             $q->whereHas('invoice', function($q) {
-                $q->where('status', '!=', 'Piutang');
+                $q->where('status', '=', 'Cash');
             });
         })->sum(DB::raw('catalog_qty * (biaya - catalog_disc)'));
 

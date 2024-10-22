@@ -60,9 +60,10 @@ class SaleResource extends Resource
                                                     ->columnSpan([
                                                         'md' => 2
                                                     ]),                                
-                                                Forms\Components\DatePicker::make('tanggal')
-                                                    ->default(now())
+                                                Forms\Components\DatePicker::make('created_at')
+                                                    ->default(fn() => Carbon::now())
                                                     ->required()
+						    ->disabled()
                                                     ->columnSpan([
                                                         'md' => 2
                                                     ]),                                                               
@@ -262,9 +263,8 @@ class SaleResource extends Resource
                     ->label('Faktur Penjualan')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('tanggal')
+                Tables\Columns\TextColumn::make('updated_at')
                     ->label('Tanggal')
-                    ->default(now())
                     ->date(),                
                 Tables\Columns\TextColumn::make('customer.name')        
                     ->label('Customer')
@@ -355,7 +355,7 @@ class SaleResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])
-	    ->defaultSort('created_at', 'DESC');
+	    ->defaultSort('updated_at', 'DESC');
     }
 
     public static function infolist(Infolist $infolist): Infolist

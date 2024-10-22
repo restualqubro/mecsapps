@@ -16,4 +16,25 @@ class EditSale extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
+
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+	$data['subtotal'] = $data['total'] + $data['totaldiscount'];	
+	return $data;
+    }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+	$data['total'] = (int)str_replace('.', '', $data['total']);
+        $data['totaldiscount'] = (int)str_replace('.', '', $data['totaldiscount']);
+        $data['totalbayar'] = (int)str_replace('.', '', $data['totalbayar']);
+        $data['sisa'] = (int)str_replace('.', '', $data['sisa']);
+
+	if ($data['sisa'] === 0) {
+		$data['status'] = 'Cash';
+	} else {
+		$data['status'] = 'Piutang';
+	}
+	return $data;
+    }
 }

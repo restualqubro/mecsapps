@@ -154,7 +154,7 @@ class InvoiceResource extends Resource
                     ->label('Merk'),
                 Tables\Columns\TextColumn::make('selesai.service.seri')
                     ->label('Seri/Tipe'),
-                Tables\Columns\TextColumn::make('created_at')
+                Tables\Columns\TextColumn::make('updated_at')
                     ->label('Tanggal')
                     ->date(),
                 Tables\Columns\TextColumn::make('sisa')
@@ -236,7 +236,7 @@ class InvoiceResource extends Resource
                     });                  
                 }                                
             })
-	      ->defaultSort('created_at', 'DESC');
+	      ->defaultSort('updated_at', 'DESC');
     }    
 
     public static function infolist(Infolist $infolist): Infolist
