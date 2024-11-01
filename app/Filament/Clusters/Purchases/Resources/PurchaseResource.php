@@ -23,6 +23,7 @@ use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Support\Enums\FontWeight;
 use Filament\Notifications\Notification;
+use Filament\Tables\Columns\Summarizers\Sum;
 
 class PurchaseResource extends Resource
 {
@@ -196,10 +197,13 @@ class PurchaseResource extends Resource
                     ->label('Tanggal')
                     ->date(),                
                 Tables\Columns\TextColumn::make('supplier.name')        
-                    ->label('Supplier'),
+                    ->label('Supplier')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('totalharga')                    
                     ->money('IDR')
-                    ->label('Total Harga'),
+                    ->label('Total Harga')
+                    ->summarize(Sum::make())
+                    ->alignBetween(),
                 Tables\Columns\BadgeColumn::make('status')
                     ->color(fn (string $state): string => match ($state) {                        
                         'Lunas' => 'warning',
@@ -209,7 +213,19 @@ class PurchaseResource extends Resource
                     ->label('Status Pembayaran')            
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('status')
+                    ->label('Purchase Status')
+                    ->options([
+                        ''   => 'All',
+                        'Lunas' => 'Lunas',                        
+                        'Utang' => 'Utang',
+                        'Cash'  => 'Cash',                         
+                    ])                    
+                    ->selectablePlaceholder(false),
+                Tables\Filters\SelectFilter::make('supplier_id') 
+                    ->label('Suppliers')                   
+                    ->options(Suppliers::all()->pluck('name', 'id'))                    
+                    ->multiple()                    
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([

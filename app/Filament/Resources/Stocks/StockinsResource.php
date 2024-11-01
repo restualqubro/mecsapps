@@ -52,7 +52,7 @@ class StockinsResource extends Resource
                                 Forms\Components\TextInput::make('sumber')
                                     ->label('Sumber Stok')
                                     ->required(),
-                                Forms\Components\TextArea::make('description')
+                                Forms\Components\Textarea::make('description')
                                     ->label('Keterangan')
                                     ->columnSpan('full')
                             ])->columns(3),

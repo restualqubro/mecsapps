@@ -61,7 +61,8 @@ class ServiceCatalogResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\TextColumn::make('name')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('biaya_min')
                     ->money('IDR'), 
                 Tables\Columns\TextColumn::make('biaya_max')

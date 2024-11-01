@@ -47,7 +47,7 @@ class StockoutsResource extends Resource
                                     ->options(StockCategories::where('jenis', '=', 'Stockout')->pluck('name', 'id'))
                                     ->searchable()
                                     ->required(),                                
-                                Forms\Components\TextArea::make('description')
+                                Forms\Components\Textarea::make('description')
                                     ->label('Keterangan'),
                             ])->columns(3),
                         Forms\Components\Card::make()
