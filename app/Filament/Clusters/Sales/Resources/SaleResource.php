@@ -24,6 +24,8 @@ use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Support\Enums\FontWeight;
 use Carbon\Carbon;
+use Filament\Tables\Actions\Action;
+use Illuminate\Database\Eloquent\Builder;
 
 class SaleResource extends Resource
 {
@@ -63,7 +65,7 @@ class SaleResource extends Resource
                                                 Forms\Components\DatePicker::make('created_at')
                                                     ->default(fn() => Carbon::now())
                                                     ->required()
-						    ->disabled()
+						                            ->disabled()
                                                     ->columnSpan([
                                                         'md' => 2
                                                     ]),                                                               
@@ -288,8 +290,54 @@ class SaleResource extends Resource
                     ->label('Status Pembayaran')            
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('status')
+                    ->label('Purchase Status')
+                    ->options([
+                        ''   => 'All',
+                        'Lunas' => 'Lunas',                        
+                        'Piutang' => 'Piutang',
+                        'Cash'  => 'Cash',                         
+                    ])                    
+                    ->selectablePlaceholder(false),
+                Tables\Filters\SelectFilter::make('customer_id') 
+                    ->label('Customers')                   
+                    ->options(Customers::all()->pluck('name', 'id'))                    
+                    ->multiple(),                
+                Tables\Filters\Filter::make('created_at')
+                    ->form([
+                        Forms\Components\DatePicker::make('created_from')
+                            ->placeholder(fn ($state): string => 'Dec 18, ' . now()->subYear()->format('Y')),
+                        Forms\Components\DatePicker::make('created_until')
+                            ->placeholder(fn ($state): string => now()->format('M d, Y')),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['created_from'] ?? null,
+                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
+                            )
+                            ->when(
+                                $data['created_until'] ?? null,
+                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
+                            );
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+                        if ($data['created_from'] ?? null) {
+                            $indicators['created_from'] = 'Order from ' . Carbon::parse($data['created_from'])->toFormattedDateString();
+                        }
+                        if ($data['created_until'] ?? null) {
+                            $indicators['created_until'] = 'Order until ' . Carbon::parse($data['created_until'])->toFormattedDateString();
+                        }
+ 
+                        return $indicators;
+                    }),                   
             ])
+            ->filtersTriggerAction(
+                fn (Action $action) => $action
+                    ->button()
+                    ->label('Filter'),
+            )
             ->actions([
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\ViewAction::make()->hiddenLabel()->tooltip('Detail'),  
@@ -349,12 +397,7 @@ class SaleResource extends Resource
                     Tables\Actions\DeleteAction::make()
                         ->hidden(fn($record): bool => $record->status === 'Lunas' || $record->status === 'Cash'),
                 ])                                
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ])
+            ])            
 	    ->defaultSort('updated_at', 'DESC');
     }
 

@@ -22,7 +22,7 @@ class ServiceCategoriesResource extends Resource
 
     protected static ?string $slug = 'service-categories';
 
-    protected static ?string $pluralModelLabel = 'Service Categories';
+    protected static ?string $pluralModelLabel = 'Service Categories';    
 
     protected static ?int $navigationSort = 1;
 

@@ -52,6 +52,11 @@ class ServiceData extends Model
         return $this->hasOne(ServiceSelesai::class, 'service_id', 'id');
     }
 
+    public function cancel(): HasOne
+    {
+        return $this->hasOne(ServiceCancel::class, 'service_id', 'id');
+    }
+
     public function topartner(): HasOne
     {
         return $this->hasOne(ServiceTopartner::class, 'service_id', 'id');                              

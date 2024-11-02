@@ -15,12 +15,13 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
+use Filament\Tables\Actions\Action;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\RepeatableEntry;
 use Carbon\Carbon;
 use Filament\Support\Enums\FontWeight;
-use Filament\Tables\Columns\Layout\Split;
+use Illuminate\Database\Eloquent\Builder;
 
 class ServiceDataResource extends Resource
 {
@@ -158,7 +159,7 @@ class ServiceDataResource extends Resource
         return $table
             ->columns([                
                 Tables\Columns\TextColumn::make('code')
-                    ->label('KODE SERVICE')
+                    ->label('Kode Service')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('customer.name')
                     ->label('Customer')
@@ -192,7 +193,7 @@ class ServiceDataResource extends Resource
             ->defaultSort('code', 'DESC')
             ->filters([                
                 Tables\Filters\SelectFilter::make('status')
-                    ->label('Categories')
+                    ->label('by Status')
                     ->options([
                         'Baru'      => 'Baru',
                         'Proses'    => 'Proses',
@@ -200,7 +201,49 @@ class ServiceDataResource extends Resource
                         'Cancel'    => 'Cancel',
                         'Keluar'    => 'Keluar'
                     ]),
-            ])            
+                Tables\Filters\SelectFilter::make('category_id')
+                    ->label('by Category')
+                    ->options(ServiceCategories::all()->pluck('name', 'id'))
+                    ->multiple(),
+                Tables\Filters\SelectFilter::make('customer_id') 
+                    ->label('by Customers')                                       
+                    ->options(Customers::all()->pluck('name', 'id'))                    
+                    ->multiple(),                
+                Tables\Filters\Filter::make('created_at')
+                    ->form([
+                        Forms\Components\DatePicker::make('created_from')
+                            ->placeholder(fn ($state): string => 'Dec 18, ' . now()->subYear()->format('Y')),
+                        Forms\Components\DatePicker::make('created_until')
+                            ->placeholder(fn ($state): string => now()->format('M d, Y')),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['created_from'] ?? null,
+                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
+                            )
+                            ->when(
+                                $data['created_until'] ?? null,
+                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
+                            );
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+                        if ($data['created_from'] ?? null) {
+                            $indicators['created_from'] = 'Order from ' . Carbon::parse($data['created_from'])->toFormattedDateString();
+                        }
+                        if ($data['created_until'] ?? null) {
+                            $indicators['created_until'] = 'Order until ' . Carbon::parse($data['created_until'])->toFormattedDateString();
+                        }
+ 
+                        return $indicators;
+                    }),                   
+            ])
+            ->filtersTriggerAction(
+                fn (Action $action) => $action
+                    ->button()
+                    ->label('Filter'),
+            ) 
             ->actions([
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\Action::make('contact')

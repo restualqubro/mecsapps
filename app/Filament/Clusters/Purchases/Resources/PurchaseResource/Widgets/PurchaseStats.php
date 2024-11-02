@@ -17,7 +17,7 @@ class PurchaseStats extends BaseWidget
         return [
             Stat::make('Pembelian Cash', number_format(self::getPurchase(), 0, '', '.')),
             Stat::make('Pembelian Utang', number_format(self::getPurchaseUtang(), 0, '', '.')),
-            Stat::make('Pembelian Lunas', number_format(self::getPurchaseLunas(), 0, '', '.')),
+            Stat::make('Pelunasan Pembelian', number_format(self::getPurchaseLunas(), 0, '', '.')),
         ];        
     }
 

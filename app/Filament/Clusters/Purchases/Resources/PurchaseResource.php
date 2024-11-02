@@ -227,23 +227,7 @@ class PurchaseResource extends Resource
                 Tables\Filters\SelectFilter::make('supplier_id') 
                     ->label('Suppliers')                   
                     ->options(Suppliers::all()->pluck('name', 'id'))                    
-                    ->multiple(),
-                // Tables\Filters\Filter::make('created_at')
-                //     ->form([
-                //         Forms\Components\DatePicker::make('created_from'),
-                //         Forms\Components\DatePicker::make('created_until'),
-                //     ])
-                //     ->query(function (Builder $query, array $data): Builder {
-                //         return $query
-                //             ->when(
-                //                 $data['created_from'],
-                //                 fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
-                //             )
-                //             ->when(
-                //                 $data['created_until'],
-                //                 fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
-                //             );
-                //     }) 
+                    ->multiple(),                
                 Tables\Filters\Filter::make('created_at')
                     ->form([
                         Forms\Components\DatePicker::make('created_from')
@@ -329,12 +313,7 @@ class PurchaseResource extends Resource
                 Tables\Actions\EditAction::make()
                     ->hidden(fn($record): bool => $record->status === 'Lunas' || $record->status === 'Cash'),
                 ]),                                
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ])
+            ])            
             ->defaultSort('created_at', 'desc');
     }
 
@@ -421,9 +400,7 @@ class PurchaseResource extends Resource
             $subtotal = $item['hbeli'] * $item['qty'];
             $totalqty += $item['qty'];
             $total+= $subtotal;
-        }              
-
-        // Update the state with the new values
+        }                      
         $set('totalharga', number_format($total, 0, '', '.'));        
         
 

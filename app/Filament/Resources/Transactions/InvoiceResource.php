@@ -6,18 +6,18 @@ use App\Filament\Resources\Transactions\InvoiceResource\Pages;
 use App\Models\Transactions\Invoices;
 use App\Models\Services\ServiceSelesai;
 use App\Models\Transactions\InvoicePiutang;
-use App\Models\Servicess\ServiceLog;
+use App\Models\Connect\Customers;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Tables\Actions\Action;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Infolists\Infolist;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\RepeatableEntry;
-use Filament\Actions\Action;
 use Carbon\Carbon;
 use Filament\Support\Enums\FontWeight;
 use Illuminate\Support\Facades\Auth;
@@ -157,6 +157,9 @@ class InvoiceResource extends Resource
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label('Tanggal')
                     ->date(),
+                Tables\Columns\TextColumn::make('selesai.total')
+                    ->label('Total')
+                    ->money('IDR'),
                 Tables\Columns\TextColumn::make('sisa')
                     ->label('Sisa')
                     ->money('IDR'),
@@ -170,8 +173,64 @@ class InvoiceResource extends Resource
                     }),                
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('status')
+                    ->label('Purchase Status')
+                    ->options([
+                        ''   => 'All',
+                        'Lunas' => 'Lunas',                        
+                        'Piutang' => 'Piutang',
+                        'Cash'  => 'Cash',                         
+                    ])                    
+                    ->selectablePlaceholder(false),
+                Tables\Filters\SelectFilter::make('customers') 
+                    ->label('Customers')                                       
+                    ->options(Customers::all()->pluck('name', 'id'))                    
+                    ->multiple()
+                    ->modifyQueryUsing(function (Builder $query, $state) {
+                        if (!empty($state['values'])) {
+                            $query->whereHas('selesai', fn($query) => 
+                            $query->whereHas('service', fn($query) => 
+                                $query->whereIn('customer_id', $state['values'])
+                            )                            
+                            );
+                        }
+                        return $query;
+                    }),                
+                Tables\Filters\Filter::make('created_at')
+                    ->form([
+                        Forms\Components\DatePicker::make('created_from')
+                            ->placeholder(fn ($state): string => 'Dec 18, ' . now()->subYear()->format('Y')),
+                        Forms\Components\DatePicker::make('created_until')
+                            ->placeholder(fn ($state): string => now()->format('M d, Y')),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['created_from'] ?? null,
+                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
+                            )
+                            ->when(
+                                $data['created_until'] ?? null,
+                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
+                            );
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+                        if ($data['created_from'] ?? null) {
+                            $indicators['created_from'] = 'Order from ' . Carbon::parse($data['created_from'])->toFormattedDateString();
+                        }
+                        if ($data['created_until'] ?? null) {
+                            $indicators['created_until'] = 'Order until ' . Carbon::parse($data['created_until'])->toFormattedDateString();
+                        }
+ 
+                        return $indicators;
+                    }),                   
             ])
+            ->filtersTriggerAction(
+                fn (Action $action) => $action
+                    ->button()
+                    ->label('Filter'),
+            )
             ->actions([            
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\ViewAction::make()->hiddenLabel()->tooltip('Details'),

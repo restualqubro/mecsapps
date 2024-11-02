@@ -53,4 +53,9 @@ class Sale extends Model
     {
         return $this->hasMany(SaleDetails::class, 'sale_id', 'id');
     }
+
+    public function salePiutang(): HasMany
+    {
+        return $this->hasMany(SalePiutang::class, 'sale_id', 'id');
+    }
 }

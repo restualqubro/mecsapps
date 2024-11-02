@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Services;
 
 use App\Filament\Resources\Services\ServiceCancelResource\Pages;
 use App\Filament\Resources\Services\ServiceCancelResource\RelationManagers;
+use App\Models\Connect\Customers;
 use App\Models\Services\ServiceCancel;
 use App\Models\Services\ServiceData;
 use App\Models\Services\ServiceLog;
@@ -12,8 +13,9 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Tables\Actions\Action;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ServiceCancelResource extends Resource
 {
@@ -37,12 +39,12 @@ class ServiceCancelResource extends Resource
                     ->label('Kode Service')
                     ->sortable()
                     ->searchable(),
+                Tables\Columns\TextColumn::make('service.customer.name')
+                    ->label('Customer'),
                 Tables\Columns\TextColumn::make('service.merk')
                     ->label('Merk / Brand'),
                 Tables\Columns\TextColumn::make('service.seri')
-                    ->label('Seri / Tipe'),
-                Tables\Columns\TextColumn::make('service.customer.name')
-                    ->label('Customer'),
+                    ->label('Seri / Tipe'),                
                 Tables\Columns\TextColumn::make('teknisi.name')
                     ->label('Teknisi'),
                 Tables\Columns\TextColumn::make('location')
@@ -53,9 +55,54 @@ class ServiceCancelResource extends Resource
                     })
                     ->color(fn ($record): string => $record->isKeluar < 1 || $record->isKeluar === null ? "secondary" : "success")
             ])
-            ->filters([
-                //
+            ->filters([ 
+                Tables\Filters\SelectFilter::make('customers') 
+                    ->label('Customers')                                       
+                    ->options(Customers::all()->pluck('name', 'id'))                    
+                    ->multiple()
+                    ->modifyQueryUsing(function (Builder $query, $state) {
+                        if (!empty($state['values'])) {                             
+                            $query->whereHas('service', fn($query) => 
+                                $query->whereIn('customer_id', $state['values'])
+                            );
+                        }
+                        return $query;
+                    }),                                            
+                Tables\Filters\Filter::make('created_at')
+                    ->form([
+                        Forms\Components\DatePicker::make('created_from')
+                            ->placeholder(fn ($state): string => 'Dec 18, ' . now()->subYear()->format('Y')),
+                        Forms\Components\DatePicker::make('created_until')
+                            ->placeholder(fn ($state): string => now()->format('M d, Y')),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['created_from'] ?? null,
+                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
+                            )
+                            ->when(
+                                $data['created_until'] ?? null,
+                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
+                            );
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+                        if ($data['created_from'] ?? null) {
+                            $indicators['created_from'] = 'Order from ' . Carbon::parse($data['created_from'])->toFormattedDateString();
+                        }
+                        if ($data['created_until'] ?? null) {
+                            $indicators['created_until'] = 'Order until ' . Carbon::parse($data['created_until'])->toFormattedDateString();
+                        }
+ 
+                        return $indicators;
+                    }),                   
             ])
+            ->filtersTriggerAction(
+                fn (Action $action) => $action
+                    ->button()
+                    ->label('Filter'),
+            ) 
             ->actions([
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\Action::make('isKeluar')

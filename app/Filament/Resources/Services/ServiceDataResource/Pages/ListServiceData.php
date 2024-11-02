@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Services\ServiceDataResource\Pages;
 
 use App\Filament\Resources\Services\ServiceDataResource;
 use Filament\Actions;
+use Filament\Pages\Concerns\ExposesTableToWidgets;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Resources\Components\Tab;
 use Illuminate\Database\Eloquent\Builder;
@@ -17,7 +18,7 @@ class ListServiceData extends ListRecords
         return [
             Actions\CreateAction::make(),
         ];
-    }
+    }   
 
     public function getTabs(): array
     {
