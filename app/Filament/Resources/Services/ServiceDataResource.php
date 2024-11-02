@@ -20,6 +20,7 @@ use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\RepeatableEntry;
 use Carbon\Carbon;
 use Filament\Support\Enums\FontWeight;
+use Filament\Tables\Columns\Layout\Split;
 
 class ServiceDataResource extends Resource
 {
@@ -155,7 +156,7 @@ class ServiceDataResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->columns([
+            ->columns([                
                 Tables\Columns\TextColumn::make('code')
                     ->label('KODE SERVICE')
                     ->searchable(),
@@ -186,8 +187,8 @@ class ServiceDataResource extends Resource
                         'Cancel' => 'danger',
                         'Keluar' => 'gray',
                     })
-                    ->sortable(),
-            ])
+                    ->sortable(),                
+            ])            
             ->defaultSort('code', 'DESC')
             ->filters([                
                 Tables\Filters\SelectFilter::make('status')
@@ -199,7 +200,7 @@ class ServiceDataResource extends Resource
                         'Cancel'    => 'Cancel',
                         'Keluar'    => 'Keluar'
                     ]),
-            ])
+            ])            
             ->actions([
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\Action::make('contact')
