@@ -6,6 +6,7 @@ use App\Filament\Resources\Services\ServiceSelesaiResource\Pages;
 use App\Filament\Resources\Services\ServiceSelesaiResource\RelationManagers;
 use App\Models\Services\ServiceSelesai;
 use App\Models\Services\ServiceData;
+use App\Models\Connect\Customers;
 use App\Models\Transactions\Sale;
 use App\Models\Products\ProductStocks;
 use App\Models\Services\ServiceCatalog;
@@ -15,12 +16,14 @@ use Filament\Forms\Components\Repeater;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Tables\Actions\Action;
 use Filament\Infolists\Infolist;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\RepeatableEntry;
 use Carbon\Carbon;
 use Filament\Support\Enums\FontWeight;
+use Illuminate\Database\Eloquent\Builder;
 
 class ServiceSelesaiResource extends Resource
 {
@@ -313,26 +316,70 @@ class ServiceSelesaiResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('service.code')
-                    ->label('KODE SERVICE')
+                    ->label('Kode Service')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('service.customer.name')
-                    ->label('NAMA CUSTOMER')
+                    ->label('Nama Customer')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('subtotal_service')
-                    ->label('SUBTOTAL SERVICE')
+                    ->label('Subtotal Service')
                     ->money('IDR'),
                 Tables\Columns\TextColumn::make('totaldiscount_service')
-                    ->label('TOTAL DISCOUNT SERVICE')
+                    ->label('Total Discount Service')
                     ->money('IDR'),
                 Tables\Columns\TextColumn::make('total')
-                    ->label('TOTAL')
-                    ->money('IDR'),
-                
+                    ->label('Total')
+                    ->money('IDR'),                
             ])
             ->defaultSort('created_at', 'DESC')
-            ->filters([
-                
+            ->filters([                 
+                Tables\Filters\SelectFilter::make('customers') 
+                    ->label('by Customers')                                       
+                    ->options(Customers::all()->pluck('name', 'id'))                    
+                    ->multiple()
+                    ->modifyQueryUsing(function (Builder $query, $state) {
+                        if (!empty($state['values'])) {                             
+                            $query->whereHas('service', fn($query) => 
+                                $query->whereIn('customer_id', $state['values'])
+                            );
+                        }
+                        return $query;
+                    }),                                            
+                Tables\Filters\Filter::make('created_at')
+                    ->form([
+                        Forms\Components\DatePicker::make('created_from')
+                            ->placeholder(fn ($state): string => 'Dec 18, ' . now()->subYear()->format('Y')),
+                        Forms\Components\DatePicker::make('created_until')
+                            ->placeholder(fn ($state): string => now()->format('M d, Y')),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['created_from'] ?? null,
+                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '>=', $date),
+                            )
+                            ->when(
+                                $data['created_until'] ?? null,
+                                fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
+                            );
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+                        if ($data['created_from'] ?? null) {
+                            $indicators['created_from'] = 'Order from ' . Carbon::parse($data['created_from'])->toFormattedDateString();
+                        }
+                        if ($data['created_until'] ?? null) {
+                            $indicators['created_until'] = 'Order until ' . Carbon::parse($data['created_until'])->toFormattedDateString();
+                        }
+ 
+                        return $indicators;
+                    }),                   
             ])
+            ->filtersTriggerAction(
+                fn (Action $action) => $action
+                    ->button()
+                    ->label('Filter'),
+            ) 
             ->actions([
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\ViewAction::make(),                        
@@ -350,7 +397,13 @@ class ServiceSelesaiResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->modifyQueryUsing(function (Builder $query) {                
+                $query->whereHas('service', fn($query) =>
+                    $query->where('status', 'Selesai')
+                );
+                return $query;
+            });
     }    
 
     public static function infolist(Infolist $infolist): Infolist

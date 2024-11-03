@@ -55,9 +55,9 @@ class ServiceCancelResource extends Resource
                     })
                     ->color(fn ($record): string => $record->isKeluar < 1 || $record->isKeluar === null ? "secondary" : "success")
             ])
-            ->filters([ 
+            ->filters([                 
                 Tables\Filters\SelectFilter::make('customers') 
-                    ->label('Customers')                                       
+                    ->label('by Customers')                                       
                     ->options(Customers::all()->pluck('name', 'id'))                    
                     ->multiple()
                     ->modifyQueryUsing(function (Builder $query, $state) {

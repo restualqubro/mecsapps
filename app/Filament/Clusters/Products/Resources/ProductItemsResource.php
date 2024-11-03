@@ -16,6 +16,8 @@ use Filament\Resources\Resource;
 use Filament\Support\Enums\FontWeight;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Tables\Actions\Action;
+use Illuminate\Database\Eloquent\Builder;
 
 class ProductItemsResource extends Resource
 {
@@ -54,7 +56,7 @@ class ProductItemsResource extends Resource
                     ->footerActions([
                         Forms\Components\Actions\Action::make('Generate')
                         ->action(function (Forms\Get $get, Forms\Set $set) {
-					$category = ProductCategories::find($get('category_id'));                            
+					    $category = ProductCategories::find($get('category_id'));                            
         				$brand = ProductBrands::find($get('brand_id'));                                                        
         
 				        if ($category === null || $brand === null) {
@@ -142,11 +144,18 @@ class ProductItemsResource extends Resource
             ->filters([
                 Tables\Filters\SelectFilter::make('category_id')
                     ->label('Categories')
-                    ->options(ProductCategories::all()->pluck('name', 'id')),
+                    ->options(ProductCategories::all()->pluck('name', 'id'))
+                    ->multiple(),
                 Tables\Filters\SelectFilter::make('brand_id')
                     ->label('Brands')
-                    ->options(ProductBrands::all()->pluck('name', 'id')),
+                    ->options(ProductBrands::all()->pluck('name', 'id'))
+                    ->multiple(),                
             ])
+            ->filtersTriggerAction(
+                fn (Action $action) => $action
+                    ->button()
+                    ->label('Filter'),
+            )
             ->actions([
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\ViewAction::make(),
@@ -172,15 +181,17 @@ class ProductItemsResource extends Resource
                 TextEntry::make('name')
                     ->label('Name'),
                 TextEntry::make('sum')                   
-                    ->label('Stok'),
-                //TextEntry::make('sumpinjam')
-                //    ->label('Peminjaman Item'),                                 
+                    ->label('Stok'),                                                
                 TextEntry::make('category.name')
                     ->label('Categories'),
                 TextEntry::make('brand.name')
                     ->label('Brands'),
                 TextEntry::make('kondisi')
                     ->label('Kondisi'),
+                TextEntry::make('stock.hbeli')
+                    ->label('Harga Beli')
+                    ->money('IDR')
+                    ->hidden(! auth()->user()->roles === 'super_admin'),
                 TextEntry::make('hjual')
                     ->label('Harga Jual Umum')
                     ->money('IDR'),
