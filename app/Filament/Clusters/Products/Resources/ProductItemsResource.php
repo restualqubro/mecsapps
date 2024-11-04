@@ -7,6 +7,7 @@ use App\Filament\Clusters\Products\Resources\ProductItemsResource\Pages;
 use App\Models\Products\ProductBrands;
 use App\Models\Products\ProductCategories;
 use App\Models\Products\ProductItems;
+use App\Models\Products\ProductStocks;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\TextEntry;
@@ -16,6 +17,7 @@ use Filament\Resources\Resource;
 use Filament\Support\Enums\FontWeight;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint;
 use Filament\Tables\Actions\Action;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -36,8 +38,7 @@ class ProductItemsResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Section::make('Code Generator')
-                    ->schema(                        
-                        [                        
+                    ->schema([                        
                         Forms\Components\Select::make('category_id')
                             ->label('Kategori')
                             ->required()
@@ -49,10 +50,11 @@ class ProductItemsResource extends Resource
                             ->options(ProductBrands::all()->pluck('name', 'id'))
                             ->searchable(),                                                    
                         Forms\Components\TextInput::make('code')
-                        ->label('Kode Product')
-                        ->required()
-                        ->readOnly(),
-                    ])->columns('3')
+                            ->label('Kode Product')
+                            ->required()
+                            ->readOnly(),
+                    ])
+                    ->columns('3')
                     ->footerActions([
                         Forms\Components\Actions\Action::make('Generate')
                         ->action(function (Forms\Get $get, Forms\Set $set) {
@@ -149,7 +151,7 @@ class ProductItemsResource extends Resource
                 Tables\Filters\SelectFilter::make('brand_id')
                     ->label('Brands')
                     ->options(ProductBrands::all()->pluck('name', 'id'))
-                    ->multiple(),                
+                    ->multiple(),                                  
             ])
             ->filtersTriggerAction(
                 fn (Action $action) => $action
@@ -168,7 +170,7 @@ class ProductItemsResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])
-	    ->defaultSort('created_at', 'DESC');
+	    ->defaultSort('code', 'ASC');
     }
     
     public static function infolist(Infolist $infolist): Infolist
