@@ -14,13 +14,7 @@ use Filament\Pages\Dashboard as BaseDashboard;
 
 class DashboardFinances extends Page
 {
-    
     use HasPageShield, InteractsWithForms;    
-
-    public function getColumns(): int | string | array
-    {
-        return 2;
-    }
     
     protected static ?string $navigationIcon = 'heroicon-o-wallet';
 
@@ -35,8 +29,11 @@ class DashboardFinances extends Page
             Widgets\BalanceStats::class,
             Widgets\OmzetChart::class,
             Widgets\ProfitChart::class,
-            Widgets\OmzetStats::class,
-            Widgets\ProfitStats::class,
+            Widgets\CashoutChart::class,
+            Widgets\CapitalChart::class,
+            Widgets\LossChart::class
+            // Widgets\OmzetStats::class,
+            // Widgets\ProfitStats::class,
             // Widgets\PelunasanStats::class,
             // Widgets\PurchaseStats::class,
             // Widgets\UtangPiutangStats::class,

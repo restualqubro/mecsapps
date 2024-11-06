@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Models\Finance\Penarikan;
 use App\Models\Services\SelesaiDetailCatalogs;
 use App\Models\Services\SelesaiDetailComponents;
 use App\Models\Services\ServiceSelesai;
@@ -22,33 +23,20 @@ class ProfitChart extends ChartWidget
                     query(SaleDetails::join('sales', 'sale_details.sale_id', '=', 'sales.id')
                                         ->join('product_stocks', 'sale_details.stock_id', '=', 'product_stocks.id')
                                         ->where('status', '!=', 'Piutang'))                        
-                    ->dateColumn('sale_details.created_at')
+                    ->dateColumn('sale_details.updated_at')
                     ->between(
                         start: now()->startOfYear(),
                         end: now()->endOfYear(),
                     )
                     ->perMonth()
                     ->sum('qty * (hjual - hbeli)');
-        $dataInvoices = Trend::                                         
-                    query(
-                        SelesaiDetailCatalogs::whereHas('selesai', function ($q)
-                        {
-                            $q->whereHas('invoice',function($q) {
-                                $q->where('status', '!=', 'Piutang');
-                            });
-                            $q->whereHas('service', function($q) {            
-                                $q->with('service_topartners');
-                            });        
-                        })                            
-                        
-                    )
-                    ->dateColumn('selesai_detail_catalogs.created_at')
+        $dataPenarikan = Trend::model(Penarikan::class)                    
                     ->between(
                         start: now()->startOfYear(),
                         end: now()->endOfYear(),
                     )
                     ->perMonth()
-                    ->sum('catalog_qty * (biaya - catalog_disc)');     
+                    ->sum('nominal');     
                     
         $data = self::operate();
         return [
@@ -57,13 +45,21 @@ class ProfitChart extends ChartWidget
                     'label' => 'Profit Penjualan',
                     'data' =>   $dataSales->map(fn (TrendValue $value) => $value->aggregate),                                
                     'borderColor' => 'rgb(252, 211, 77)',
+                    'backgroundColor' => 'rgb(252, 211, 77)',
                 ], 
                 [
                     'label' => 'Profit Service',
                     // 'data' =>   $data->map(fn (TrendValue $value) => $value->aggregate),                                
                     'data' => $data['data'],
                     'borderColor' => 'rgb(248, 113, 113)',
-                ],                
+                    'backgroundColor' => 'rgb(248, 113, 113)',
+                ],    
+                [
+                    'label' => 'Penarikan Tunai',
+                    'data' =>   $dataPenarikan->map(fn (TrendValue $value) => $value->aggregate),                                
+                    'borderColor' => 'rgb(22, 211, 77)',
+                    'backgroundColor' => 'rgb(22, 211, 77)',
+                ],            
             ],
             'labels' => $dataSales->map(fn (TrendValue $value) => \Carbon\Carbon::parse($value->date)->format('M')),
             'height' => '500px',
@@ -90,7 +86,7 @@ class ProfitChart extends ChartWidget
                     })                            
                     
                 )
-                ->dateColumn('selesai_detail_catalogs.created_at')
+                ->dateColumn('selesai_detail_catalogs.updated_at')
                 ->between(
                     start: now()->startOfYear(),
                     end: now()->endOfYear(),
@@ -114,7 +110,7 @@ class ProfitChart extends ChartWidget
             })                            
             
         )
-        ->dateColumn('selesai_detail_components.created_at')
+        ->dateColumn('selesai_detail_components.updated_at')
         ->between(
             start: now()->startOfYear(),
             end: now()->endOfYear(),
@@ -138,7 +134,7 @@ class ProfitChart extends ChartWidget
                 });
             })
         )
-        ->dateColumn('service_topartners.created_at')
+        ->dateColumn('service_topartners.updated_at')
         ->between(
             start: now()->startOfYear(),
             end: now()->endOfYear(),
