@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use App\Models\Services\SelesaiDetailCatalogs;
+use App\Models\Transactions\Invoices;
 use App\Models\Transactions\SaleDetails;
 use Filament\Widgets\ChartWidget;
 use Flowframe\Trend\Trend;
@@ -27,18 +28,13 @@ class OmzetChart extends ChartWidget
                     ->perMonth()
                     ->sum('qty * (hjual - disc)');
                     
-        $dataInvoices = Trend::
-                    query(SelesaiDetailCatalogs::whereHas('selesai', function($q) {
-                        $q->whereHas('invoice', function($q) {
-                            $q->where('status', '!=', 'Piutang');
-                        });
-                    }))
+        $dataInvoices = Trend::model(Invoices::class)
                     ->between(
                         start: now()->startOfYear(),
                         end: now()->endOfYear(),
                     )
                     ->perMonth()
-                    ->sum('catalog_qty * (biaya - catalog_disc)');
+                    ->sum('totalbayar');
 
         return [
             'datasets' => [                
