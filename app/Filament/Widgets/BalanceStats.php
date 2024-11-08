@@ -20,6 +20,7 @@ use App\Models\Finance\Pengeluaran;
 use App\Models\Retur\InvoiceRetur;
 use App\Models\Services\ServiceTopartner;
 use App\Models\Transactions\Purchase;
+use App\Models\Transactions\PurchaseUtang;
 use Illuminate\Support\Facades\DB;
 
 class BalanceStats extends BaseWidget
@@ -37,9 +38,10 @@ class BalanceStats extends BaseWidget
         $getPenarikan = self::getPenarikanCash() + self::getPenarikanRekening(); 
         $getSaldoMandiri = self::getTransferIn() - (self::getTransferOut() + self::getPenarikanRekening());
         $getSaldoCash = (self::getOmzetSales() + self::getOmzetInvoices() + self::getPemasukan()) 
-                        - (self::getPenarikanCash() + self::getAllCashouts() + self::getPurchase() 
+                        - (self::getPenarikanCash() + self::getAllCashouts() + self::getPurchase()
+                        + self::getPurchasesUtang() 
                         + self::getCompensation() + self::getTopartnerSum() + 
-                        + $getSaldoMandiri) + self::getReturServiceSum();        
+                        + $getSaldoMandiri + self::getReturServiceSum());        
         return [
             Stat::make('Saldo Cash', number_format(($getSaldoCash), 0, '', '.')),
             Stat::make('Saldo Mandiri', number_format($getSaldoMandiri, 0, '', '.')),            
@@ -142,6 +144,15 @@ class BalanceStats extends BaseWidget
     {
         $data = InvoiceRetur::get()
                 ->sum('totalbiaya');
+
+        return $data;
+    }
+
+    public static function getPurchasesUtang(): int
+    {
+        $data = PurchaseUtang::
+            get()
+            ->sum('bayar');
 
         return $data;
     }
