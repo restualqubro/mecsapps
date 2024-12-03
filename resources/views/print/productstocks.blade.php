@@ -91,10 +91,19 @@
                     </p>
                     <h4>{{$title}}</h4>
                     <br/>                    
-                    <br/>   
-                    <p>Total Items : {{$count}}<br/>
-                    Printed at : {{$dateTime}}</p>    
-                    Printed by : {{$users}}             
+                    <br/>                   
+                        Filters by 
+                        @if($request === null)
+                        : -                        
+                        @else()
+                        <br>
+                        - Categories : {{$productCategories}}                            
+                        <br>
+                        - Brands : {{$productBrands}}
+                        <br>
+                        - Stok : {{$stok}}
+                        @endif
+                    </p>       
                 </div>   
             </div>
           </div>          
@@ -115,18 +124,22 @@
             </tr>
           </thead>
           <tbody> 
-            @foreach($item as $items)
+            @foreach($items as $item)
             <tr>
-                <td>{{$items->fullCode}}</td>
-                <td>{{$items->product->name}}</td>
-                <td>{{$items->product->category->name}}</td>
-                <td>{{$items->stok}}</td>
-                <td>{{number_format($items->hbeli, 0, '', '.')}}</td>
-                <td>{{number_format($items->product->hjual, 0, '', '.')}}</td>
+                <td>{{$item->fullCode}}</td>
+                <td>{{$item->item->name}}</td>
+                <td>{{$item->item->category->name}}</td>
+                <td>{{$item->stok}}</td>
+                <td>{{number_format($item->hbeli, 0, '', '.')}}</td>
+                <td>{{number_format($item->item->hjual, 0, '', '.')}}</td>
             </tr>   
             @endforeach        
           </tbody>
-        </table>                   
+        </table>  
+        <p>Total Items : {{$count}}<br/>
+            <small>Printed at : {{$dateTime}}      
+            by : {{Auth::user()->name}}</small></p>      
+            <p>                 
     </div>
 
 

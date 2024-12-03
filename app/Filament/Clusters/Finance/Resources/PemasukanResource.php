@@ -56,7 +56,8 @@ class PemasukanResource extends Resource
                     ->label('Nominal')
                     ->numeric(decimalPlaces:0),
                 Tables\Columns\TextColumn::make('submitted.name')
-                    ->label('Submitted By')                
+                    ->label('Submitted By'),
+                Tables\Columns\TextColumn::make('updated_at')              
             ])
             ->filters([
                 //
@@ -71,7 +72,8 @@ class PemasukanResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->defaultSort('created_at', 'DESC');
     }
 
     public static function getPages(): array

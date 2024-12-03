@@ -12,9 +12,11 @@ use Filament\Pages\SubNavigationPosition;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Tables\Actions\Action;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
+use Tapp\FilamentValueRangeFilter\Filters\ValueRangeFilter;
 
 class ProductStocksResource extends Resource
 {
@@ -74,8 +76,13 @@ class ProductStocksResource extends Resource
                     ->label('Stok'),                
             ])
             ->filters([
-                //
+                ValueRangeFilter::make('stok')
             ])
+            ->filtersTriggerAction(
+                fn (Action $action) => $action
+                    ->button()
+                    ->label('Filter'),
+            )
             ->actions([
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\EditAction::make(),
@@ -103,7 +110,7 @@ class ProductStocksResource extends Resource
         return [
             'index' => Pages\ListProductStocks::route('/'),
             'create' => Pages\CreateProductStocks::route('/create'),
-            'edit' => Pages\EditProductStocks::route('/{record}/edit'),
+            // 'edit' => Pages\EditProductStocks::route('/{record}/edit'),
         ];
     }
 }

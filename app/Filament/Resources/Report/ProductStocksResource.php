@@ -3,9 +3,11 @@
 namespace App\Filament\Resources\Report;
 
 use App\Filament\Resources\Report\ProductStocksResource\Pages;
+use App\Models\Products\ProductBrands;
 use App\Models\Products\ProductCategories;
 use App\Models\Products\ProductStocks;
 use Filament\Resources\Resource;
+use Tapp\FilamentValueRangeFilter\Filters\ValueRangeFilter;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Table;
@@ -29,37 +31,34 @@ class ProductStocksResource extends Resource
                 Tables\Columns\TextColumn::make('item.name'),
                 Tables\Columns\TextColumn::make('item.category.name'),
                 Tables\Columns\TextColumn::make('item.brand.name'),
-                Tables\Columns\TextColumn::make('stok'),
+                Tables\Columns\TextColumn::make('stok')
+                    ->label('Stok'),
                 Tables\Columns\TextColumn::make('hbeli')
+                    ->label('Harga Beli')
                     ->numeric(decimalPlaces:0),
                 Tables\Columns\TextColumn::make('item.hjual')
+                    ->label('Harga Jual')
                     ->numeric(decimalPlaces:0)
             ])            
             
             ->filters([
-                Tables\Filters\SelectFilter::make('item')                                        
+                Tables\Filters\SelectFilter::make('category_id')                                        
+                    ->relationship('item.category', 'name')
                     ->label('by Category')
-                    ->options(
-                        ProductCategories::all()->pluck('name', 'id')
-                    )
                     ->searchable()
-                    ->multiple()
-                    // ->modifyQueryUsing(function (Builder $query, $state)
-                    // {
-                    //     if (! $state['values']) {
-                    //         return $query;
-                    //     }
-                    //     // return $query->whereHas('businesses', fn($query) => $query->where('id', $state['value']));
-                    //     return $query->whereHas('item', fn($query) => 
-                    //         $query->orWhere('category_id', 'LIKE', '%'.$state['values'].'%')
-                    //     );                    
-                    // })
+                    ->multiple(),
+                Tables\Filters\SelectFilter::make('brand_id')
+                    ->relationship('item.brand', 'name')
+                    ->label('by Brand')
+                    ->searchable()
+                    ->multiple(),     
+                ValueRangeFilter::make('stok')                          
             ])
             ->filtersTriggerAction(
                 fn (Action $action) => $action
                     ->button()
                     ->label('Filter'),
-            );
+            );            
     }
     
 

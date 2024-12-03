@@ -46,11 +46,12 @@ class CompensationResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('nominal'),
-                Tables\Columns\TextColumn::make('category.name'),
-                Tables\Columns\TextColumn::make('description')
-                    ->searchable()
-                    ->limit(50)
+                Tables\Columns\TextColumn::make('nominal')
+                    ->money('IDR')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('category.name')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('updated_at')                                        
             ])
             ->filters([                                
                 Tables\Filters\SelectFilter::make('category_id')
@@ -103,7 +104,8 @@ class CompensationResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->defaultSort('updated_at', 'DESC');
     }
 
     public static function getPages(): array

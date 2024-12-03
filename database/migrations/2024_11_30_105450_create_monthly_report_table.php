@@ -11,8 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('penarikans', function (Blueprint $table) {
+        Schema::create('monthly_report', function (Blueprint $table) {
+            $table->ulid('id')->primary();
+            $table->string('year', 4);
+            $table->string('month');
+            $table->date('date_from');
+            $table->date('date_to');
             $table->string('description')->nullable();
+            $table->timestamps();
         });
     }
 
@@ -21,8 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('penarikans', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('monthly_report');
     }
 };

@@ -74,7 +74,8 @@ class ServiceTopartnerResource extends Resource
                         'Selesai' => 'success',
                         'Cancel' => 'danger',
                         'Kembali' => 'gray',
-                    })
+                    }),
+                Tables\Columns\TextColumn::make('updated_at')
             ])
             ->filters([                 
                 Tables\Filters\SelectFilter::make('partner_id') 
@@ -246,7 +247,8 @@ class ServiceTopartnerResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->defaultSort('updated_at', 'DESC');
     }
 
     public static function infolist(Infolist $infolist): Infolist

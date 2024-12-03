@@ -20,7 +20,7 @@ class CapitalChart extends ChartWidget
         $dataPurchase = Trend::query(
                         Purchase::where('status', '=', 'Cash')
                         ) 
-                        ->between(
+                        ->dateColumn('updated_at')->between(
                             start:now()->startOfyear(),
                             end: now()->endOfyear(),
                         )
@@ -29,7 +29,7 @@ class CapitalChart extends ChartWidget
         $dataTopartner = Trend::query(
                         ServiceTopartner::where('status_pembayaran', '=', 'Lunas')
                         ) 
-                        ->between(
+                        ->dateColumn('updated_at')->between(
                             start:now()->startOfyear(),
                             end: now()->endOfyear(),
                         )
@@ -38,7 +38,7 @@ class CapitalChart extends ChartWidget
         $dataPelunasan = Trend::model(
                         PurchaseUtang::class
                         ) 
-                        ->between(
+                        ->dateColumn('updated_at')->between(
                             start:now()->startOfyear(),
                             end: now()->endOfyear(),
                         )

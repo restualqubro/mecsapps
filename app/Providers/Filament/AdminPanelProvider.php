@@ -27,6 +27,8 @@ use App\Http\Controllers\Print\SelesaiReceipt;
 use App\Http\Controllers\Print\InvoiceReceipt;
 use App\Http\Controllers\Print\FakturJual;
 use App\Http\Controllers\Print\FakturPreorder;
+use App\Http\Controllers\Print\ReportStock;
+use App\Http\Controllers\Print\MonthlyReport;
 use App\Http\Controllers\Print\StockMinus;
 use App\Http\Controllers\Print\ServiceData;
 
@@ -84,6 +86,8 @@ class AdminPanelProvider extends PanelProvider
                 Route::get('/print/fakturpreorder/{id}', [FakturPreorder::class, 'print']);
                 Route::get('/print/reportstockminus/', [StockMinus::class, 'print']);
                 Route::get('/print/reportservicedata/', [ServiceData::class, 'print']);
+                Route::get('/print/reportstock/', [ReportStock::class, 'print']);
+                Route::get('/print/monthlyreport/{id}', [MonthlyReport::class, 'print']);
             })
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([

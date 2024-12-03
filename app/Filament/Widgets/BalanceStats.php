@@ -36,16 +36,11 @@ class BalanceStats extends BaseWidget
     protected function getStats(): array
     {       
         $getPenarikan = self::getPenarikanCash() + self::getPenarikanRekening(); 
-        $getSaldoMandiri = self::getTransferIn() - (self::getTransferOut() + self::getPenarikanRekening());
-        $getSaldoCash = (self::getOmzetSales() + self::getOmzetInvoices() + self::getPemasukan()) 
-                        - (self::getPenarikanCash() + self::getAllCashouts() + self::getPurchase()
-                        + self::getPurchasesUtang() 
-                        + self::getCompensation() + self::getTopartnerSum() + 
-                        + $getSaldoMandiri + self::getReturServiceSum());        
+        $getSaldoMandiri = self::getSaldoMandiri();
+        $getSaldoCash = self::getSaldoCash();
         return [
             Stat::make('Saldo Cash', number_format(($getSaldoCash), 0, '', '.')),
             Stat::make('Saldo Mandiri', number_format($getSaldoMandiri, 0, '', '.')),            
-            // Stat::make('Penarikan Tunai', number_format($getPenarikan, 0, '', '.')),            
         ];
     }
 
@@ -127,12 +122,7 @@ class BalanceStats extends BaseWidget
 
     public static function getTopartnerSum(): int
     {
-        $data = ServiceTopartner::whereHas('service', function($q) {
-                    $q->whereHas('selesai', function ($q) {
-                        $q->whereHas('invoice', function($q) {
-                            $q->where('status', '!=', 'Piutang');
-                        });
-                    });
+        $data = ServiceTopartner::whereHas('service', function($q) {                    
                 })
                 ->get()
                 ->sum('biaya');
@@ -155,5 +145,19 @@ class BalanceStats extends BaseWidget
             ->sum('bayar');
 
         return $data;
+    }
+
+    public static function getSaldoCash()
+    {
+        return (self::getOmzetSales() + self::getOmzetInvoices() + self::getPemasukan()) 
+                - (self::getPenarikanCash() + self::getAllCashouts() + self::getPurchase()
+                + self::getPurchasesUtang() + (self::getTransferIn() - self::getTransferOut())
+                + self::getCompensation() + self::getTopartnerSum() + 
+                + self::getReturServiceSum());
+    }
+
+    public static function getSaldoMandiri()
+    {
+        return self::getTransferIn() - (self::getTransferOut() + self::getPenarikanRekening());
     }
 }

@@ -7,7 +7,6 @@ use App\Filament\Clusters\Products\Resources\ProductItemsResource\Pages;
 use App\Models\Products\ProductBrands;
 use App\Models\Products\ProductCategories;
 use App\Models\Products\ProductItems;
-use App\Models\Products\ProductStocks;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\TextEntry;
@@ -151,7 +150,8 @@ class ProductItemsResource extends Resource
                 Tables\Filters\SelectFilter::make('brand_id')
                     ->label('Brands')
                     ->options(ProductBrands::all()->pluck('name', 'id'))
-                    ->multiple(),                                  
+                    ->multiple(),                
+
             ])
             ->filtersTriggerAction(
                 fn (Action $action) => $action

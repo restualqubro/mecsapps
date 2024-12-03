@@ -16,7 +16,7 @@ class ListProductStocks extends ListRecords
         return [
             Actions\Action::make('export')
                 ->label('Export PDF')
-                ->url('/print/reportstoc?'. $decodeQueryString)                
+                ->url('/print/reportstock?'. $decodeQueryString)                
                 ->openUrlInNewTab()            
         ];
     }
