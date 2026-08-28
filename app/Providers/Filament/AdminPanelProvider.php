@@ -46,6 +46,7 @@ class AdminPanelProvider extends PanelProvider
             ->colors(fn (GeneralSettings $settings) => $settings->site_theme)
             ->maxContentWidth('full') 
             ->sidebarFullyCollapsibleOnDesktop() 
+            // ->timezone('Asia/Makassar')
             // ->viteTheme('resources/css/filament/admin/theme.css')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')

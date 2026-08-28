@@ -127,7 +127,8 @@ class PengeluaranResource extends Resource
                             'status'        => 'Approve',
                             'approval_id'   => auth()->id()
                         ]))
-                        ->hidden(fn(Pengeluaran $record)=> $record->status != 'Baru' || auth()->user()->roles->pluck('name')[0] != 'super_admin'),
+                        ->visible(fn () => auth()->user()->hasAnyRole(['Admin', 'Owner', 'Super_Admin']))
+                        ->hidden(fn(Pengeluaran $record)=> $record->status != 'Baru'),
                     Tables\Actions\Action::make('Reject')
                         ->label('Reject')
                         ->icon('heroicon-o-x-circle')
@@ -140,7 +141,8 @@ class PengeluaranResource extends Resource
                             'status'        => 'Reject',
                             'approval_id'   => auth()->id()
                         ]))
-                        ->hidden(fn(Pengeluaran $record)=> $record->status != 'Baru' || auth()->user()->roles->pluck('name')[0] != 'super_admin'),
+                        ->visible(fn () => auth()->user()->hasAnyRole(['Admin', 'Owner', 'Super_Admin']))
+                        ->hidden(fn(Pengeluaran $record)=> $record->status != 'Baru'),
                     Tables\Actions\DeleteAction::make(),
                 ])
                 

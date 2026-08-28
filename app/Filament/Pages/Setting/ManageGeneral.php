@@ -3,6 +3,7 @@
 namespace App\Filament\Pages\Setting;
 
 use App\Settings\GeneralSettings;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
@@ -14,6 +15,8 @@ use function Filament\Support\is_app_url;
 
 class ManageGeneral extends SettingsPage
 {
+    use HasPageShield;
+
     protected static string $settings = GeneralSettings::class;
 
     protected static ?int $navigationSort = 99;

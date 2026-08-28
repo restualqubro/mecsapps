@@ -39,9 +39,9 @@ class BalanceStats extends BaseWidget
         $getSaldoMandiri = self::getTransferIn() - (self::getTransferOut() + self::getPenarikanRekening());
         $getSaldoCash = (self::getOmzetSales() + self::getOmzetInvoices() + self::getPemasukan()) 
                         - (self::getPenarikanCash() + self::getAllCashouts() + self::getPurchase()
-                        + self::getPurchasesUtang() 
+                        + self::getPurchasesUtang() + (self::getTransferIn() - self::getTransferOut())
                         + self::getCompensation() + self::getTopartnerSum() + 
-                        + $getSaldoMandiri + self::getReturServiceSum());        
+                        + self::getReturServiceSum());        
         return [
             Stat::make('Saldo Cash', number_format(($getSaldoCash), 0, '', '.')),
             Stat::make('Saldo Mandiri', number_format($getSaldoMandiri, 0, '', '.')),            

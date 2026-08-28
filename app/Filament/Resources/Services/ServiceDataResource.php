@@ -190,10 +190,11 @@ class ServiceDataResource extends Resource
                     })
                     ->sortable(),                
             ])            
-            ->defaultSort('code', 'DESC')
+            ->defaultSort('created_at', 'DESC')
             ->filters([                
                 Tables\Filters\SelectFilter::make('status')
                     ->label('by Status')
+                    ->searchable()
                     ->options([
                         'Baru'      => 'Baru',
                         'Proses'    => 'Proses',
@@ -204,10 +205,12 @@ class ServiceDataResource extends Resource
                 Tables\Filters\SelectFilter::make('category_id')
                     ->label('by Category')
                     ->options(ServiceCategories::all()->pluck('name', 'id'))
+                    ->searchable()
                     ->multiple(),
                 Tables\Filters\SelectFilter::make('customer_id') 
                     ->label('by Customers')                                       
-                    ->options(Customers::all()->pluck('name', 'id'))                    
+                    ->options(Customers::all()->pluck('name', 'id'))          
+                    ->searchable()          
                     ->multiple(),                
                 Tables\Filters\Filter::make('created_at')
                     ->form([
